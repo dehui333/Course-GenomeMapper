@@ -1,3 +1,3 @@
-# \<color\>_mapper
+# \<Mist\>_mapper
 
-Read the [docs](docs/README.md) to start coding.
+![build workflow](https://github.com/dehui333/Course-GenomeMapper/actions/workflows/cmake.yml/badge.svg)
