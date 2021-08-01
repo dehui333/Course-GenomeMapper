@@ -2,9 +2,9 @@
 #include <iostream>
 #include <string>
 
+#include "config.h"
 
-double VERSION_MAJOR = 0;
-double VERSION_MINOR = 0;
+
 int main(int argc, char** argv) {
     
     
@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
         }
         
         if (flag == "--version") {
-            std::cout << "This is version " << VERSION_MAJOR << "." << VERSION_MINOR << std::endl;
+            std::cout << "This is version " << VERSION_MAJOR << "." << VERSION_MINOR << "." << VERSION_PATCH << std::endl;
         }
     
     } else {

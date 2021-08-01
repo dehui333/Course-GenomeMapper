@@ -1,0 +1,4 @@
+// the configured options and settings for Tutorial
+#define VERSION_MAJOR @mist_mapper_VERSION_MAJOR@
+#define VERSION_MINOR @mist_mapper_VERSION_MINOR@
+#define VERSION_PATCH @mist_mapper_VERSION_PATCH@
