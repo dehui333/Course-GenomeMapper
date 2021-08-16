@@ -27,11 +27,3 @@ FetchContent_MakeAvailable(googletest)
 # add subdirectories
 add_subdirectory(test)
 
-# add bioparser
-FetchContent_Declare(
-  bioparser
-  GIT_REPOSITORY https://github.com/rvaser/bioparser
-  GIT_TAG        1d059386f30ffc2e2902b76cf4fb33c446a5b9bb # release-3.0.12
-)
-
-FetchContent_MakeAvailable(bioparser)
