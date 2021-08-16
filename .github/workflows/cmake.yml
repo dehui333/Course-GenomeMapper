@@ -24,9 +24,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Configure zlib
-      #For some reasons it is problematic for windows
-      run: cmake -DZLIB_LIBRARY:FILEPATH="/usr/bin/zlib-1.2.11/zlib.lib"
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}/build/
