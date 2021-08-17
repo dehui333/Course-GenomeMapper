@@ -12,12 +12,20 @@ void FastaParser::parse(std::string path) {
     std::string read_buffer;
     std::string store_buffer_name;
     std::string store_buffer_sequence = "";
+    int index = 1;
     while (getline(input_file, read_buffer)) {
         if (read_buffer[0] == '>') {
             store_buffer_name = read_buffer.substr(1);
             if (store_buffer_sequence != "") {
                 std::pair<std::string, std::string> p (store_buffer_name, store_buffer_sequence);
                 sequences.push_back(p);
+                average_L += (p.second.size() - average_L) / index++;
+                if (p.second.size() > max_L) {
+                    max_L = p.second.size();
+                } 
+                if (p.second.size() < min_L) {
+                    min_L = p.second.size();    
+                }
             }                
         } else {
             store_buffer_sequence += read_buffer;
@@ -27,6 +35,13 @@ void FastaParser::parse(std::string path) {
     if (store_buffer_sequence != "") {
                 std::pair<std::string, std::string> p (store_buffer_name, store_buffer_sequence);
                 sequences.push_back(p);
+                average_L += (p.second.size() - average_L) / index;
+                if (p.second.size() > max_L) {
+                    max_L = p.second.size();
+                } 
+                if (p.second.size() < min_L) {
+                    min_L = p.second.size();    
+                }
     }
 
 }

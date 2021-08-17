@@ -1,8 +1,10 @@
+#include <climits>
 #include <fstream>
 #include <iostream>
 #include <string>
 
 #include "config.h"
+#include "fasta_parser.h"
 
 
 int main(int argc, char** argv) {
