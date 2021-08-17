@@ -15,7 +15,7 @@ jobs:
       matrix:
         os: [macos-11, windows-2019, ubuntu-20.04]
         #removed windows due to problem with zlib(bug with cmake?)
-        compiler: [g++, g++-4.8, clang++]
+        compiler: [g++, clang++]
   
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
@@ -25,31 +25,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
-    - if: ${{ matrix.compiler == 'g++-4.8' }}
-      name: Setup GCC
-      uses: egor-tensin/setup-gcc@v1
-      with:
-        version: "4.8"
-        platform: x64
-
-    - if: ${{ matrix.compiler == 'clang++-4.0' }}
-      name: Setup Clang
-      uses: egor-tensin/setup-clang@v1
-      with:
-        version: "4.0"
-        platform: x64
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{ github.workspace }}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+      run: cmake -B ${{ github.workspace }}/build 
       env:
         CXX: ${{ matrix.compiler }}
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{ github.workspace }}/build --config ${{ env.BUILD_TYPE }}
+      run: cmake --build ${{ github.workspace }}/build 
 
     - name: Test
       working-directory: ${{github.workspace}}/build/test
