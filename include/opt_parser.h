@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_set>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -10,40 +10,17 @@ A class to represent a defined option for the option parser. Each option should 
 different specifications on whether there is an argument leads to undefined behavior.
 */
 
-class Option {
-public:
-    std::string name;
-    bool has_argument;
-    
-    Option(std::string name, bool has_argument) {
-        this->name = name;
-        this->has_argument = has_argument;
-    }
-    
-    bool operator==(const Option &o) const {
-        return name == o.name;
-    }
-                
-};
-
-class OptionHash {
-public:
-    std::size_t operator() (const Option& o) const {
-        return std::hash<std::string>{}(o.name);
-    }
-    
-};
 
 
 class OptParser {
 
 private:
-    std::unordered_set<Option, OptionHash> options;
+    std::unordered_map<std::string, bool> options;
 public:         
     
-    OptParser(std::unordered_set<Option, OptionHash> options);
+    OptParser(std::unordered_map<std::string, bool> options);
     
-    std::vector<std::pair<std::string, std::string>> parse(int argc, char** argv);
+    std::vector<std::pair<std::string, std::string>> parse(int argc, char** argv, std::vector<std::string>& non_opts, std::vector<std::pair<std::string, std::string>>& bad_opts);
 
 
 
