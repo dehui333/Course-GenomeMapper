@@ -33,6 +33,16 @@ public:
     
     std::vector<std::pair<std::string, std::string>> parse(int argc, char** argv, std::vector<std::string>& non_opts, std::vector<std::pair<std::string, std::string>>& bad_opts);
 
+    bool is_potential_short_opt(std::string s);
+    
+    bool is_potential_long_opt(std::string s);
+    
+    bool is_short_opt(std::string s, bool& needs_argument);
+    
+    bool is_long_opt(std::string s, bool& needs_argument);
+    
+    bool is_non_opt(std::string);
+    
     
 
 
