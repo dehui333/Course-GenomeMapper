@@ -5,7 +5,7 @@
 #include <string>
 
 #include "config.h"
-#include "fasta_parser.h"
+#include "fasta_parser/fasta_parser.h"
 
 
 int main(int argc, char** argv) {
