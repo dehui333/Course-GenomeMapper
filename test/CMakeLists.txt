@@ -1,13 +1,19 @@
 enable_testing()
+# directory to get the header files to include
+include_directories(PUBLIC "../include")
+
 
 add_executable(
-  test_test
-  test_test.cpp
+  OptParserTest
+  OptParserTest.cpp
 )
 target_link_libraries(
-  test_test
+  OptParserTest
   gtest_main
 )
 
+
+
+
 include(GoogleTest)
-gtest_discover_tests(test_test)
+gtest_discover_tests(OptParserTest)

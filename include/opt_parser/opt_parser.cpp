@@ -6,7 +6,7 @@ OptParser::OptParser(std::unordered_map<std::string, bool> options) {
     this->options = options;
 }    
 
-std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, char** argv, std::vector<std::string>& non_opts, std::vector<std::pair<std::string, std::string>>& bad_opts) {
+std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, std::string argv[], std::vector<std::string>& non_opts, std::vector<std::pair<std::string, std::string>>& bad_opts) {
     std::vector<std::pair<std::string, std::string>> opts;
     bool needs_argument;
     for (int i = 1; i < argc; i++) {
@@ -17,8 +17,9 @@ std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, char
         } else {
             if (is_potential_short_opt(s)) {
                 if (is_short_opt(s, needs_argument)) {
+                    std::string opt_code = s.substr(1);
                     if (!needs_argument) {
-                        opts.push_back(make_pair(s, ""));
+                        opts.push_back(make_pair(opt_code, ""));
                         continue;
                     }
                     
@@ -29,7 +30,7 @@ std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, char
                     }
                     std::string potential_argument = argv[i];
                     if (is_non_opt(potential_argument)) {
-                        opts.push_back(make_pair(s, potential_argument));
+                        opts.push_back(make_pair(opt_code, potential_argument));
                     } else {
                         bad_opts.push_back(make_pair(s, "Cannot find argument for " + s + "!\n"));
                         i--;
@@ -40,8 +41,9 @@ std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, char
                 
             } else if (is_potential_long_opt(s)) {
                 if (is_long_opt(s, needs_argument)) {
+                    std::string opt_code = s.substr(2);
                     if (!needs_argument) {
-                        opts.push_back(make_pair(s, ""));
+                        opts.push_back(make_pair(opt_code, ""));
                         continue;
                     }
                     i++;
@@ -51,7 +53,7 @@ std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, char
                     }
                     std::string potential_argument = argv[i];
                     if (is_non_opt(potential_argument)) {
-                        opts.push_back(make_pair(s, potential_argument));
+                        opts.push_back(make_pair(opt_code, potential_argument));
                     } else {
                         bad_opts.push_back(make_pair(s, "Cannot find argument for " + s + "!\n"));
                         i--;
@@ -115,7 +117,7 @@ bool OptParser::is_non_opt(std::string s) {
     return !(is_potential_long_opt(s) || is_potential_short_opt(s));
 }
 
-
+/*
 //For debugging, will be deleted
 int main(int argc, char** argv) {
     std::unordered_map<std::string, bool> m = {{"h", false}, {"version", false}, {"test", true}, {"test2", true}};
@@ -136,4 +138,4 @@ int main(int argc, char** argv) {
         std::cout << p.first << " " << p.second << "\n";
     }
 
-}
+}*/

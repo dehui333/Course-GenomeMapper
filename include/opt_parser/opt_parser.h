@@ -31,7 +31,7 @@ public:
     
     OptParser(std::unordered_map<std::string, bool> options);
     
-    std::vector<std::pair<std::string, std::string>> parse(int argc, char** argv, std::vector<std::string>& non_opts, std::vector<std::pair<std::string, std::string>>& bad_opts);
+    std::vector<std::pair<std::string, std::string>> parse(int argc, std::string argv[], std::vector<std::string>& non_opts, std::vector<std::pair<std::string, std::string>>& bad_opts);
 
     bool is_potential_short_opt(std::string s);
     
