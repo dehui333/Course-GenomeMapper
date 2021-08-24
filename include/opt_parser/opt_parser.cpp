@@ -2,11 +2,12 @@
 
 #include "opt_parser.h"
 
+
 OptParser::OptParser(std::unordered_map<std::string, bool> options) {
     this->options = options;
 }    
 
-std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, std::string argv[], std::vector<std::string>& non_opts, std::vector<std::pair<std::string, std::string>>& bad_opts) {
+std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, std::string argv[], std::vector<std::string>& non_opts, std::vector<std::pair<std::string, int>>& bad_opts) {
     std::vector<std::pair<std::string, std::string>> opts;
     bool needs_argument;
     for (int i = 1; i < argc; i++) {
@@ -25,18 +26,18 @@ std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, std:
                     
                     i++;
                     if (i >= argc) {
-                        bad_opts.push_back(make_pair(s, "Cannot find argument for " + s + "!\n"));
+                        bad_opts.push_back(make_pair(s, NO_ARGUMENT));
                         break;
                     }
                     std::string potential_argument = argv[i];
                     if (is_non_opt(potential_argument)) {
                         opts.push_back(make_pair(opt_code, potential_argument));
                     } else {
-                        bad_opts.push_back(make_pair(s, "Cannot find argument for " + s + "!\n"));
+                        bad_opts.push_back(make_pair(s, NO_ARGUMENT));
                         i--;
                     }
                 } else {
-                    bad_opts.push_back(make_pair(s, s +" is an undefined option!\n"));
+                    bad_opts.push_back(make_pair(s, UNDEFINED));
                 }
                 
             } else if (is_potential_long_opt(s)) {
@@ -48,18 +49,18 @@ std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, std:
                     }
                     i++;
                     if (i >= argc) {
-                        bad_opts.push_back(make_pair(s, "Cannot find argument for " + s + "!\n"));
+                        bad_opts.push_back(make_pair(s, NO_ARGUMENT));
                         break;
                     }
                     std::string potential_argument = argv[i];
                     if (is_non_opt(potential_argument)) {
                         opts.push_back(make_pair(opt_code, potential_argument));
                     } else {
-                        bad_opts.push_back(make_pair(s, "Cannot find argument for " + s + "!\n"));
+                        bad_opts.push_back(make_pair(s, NO_ARGUMENT));
                         i--;
                     }
                 } else {
-                    bad_opts.push_back(make_pair(s, s +" is an undefined option!\n"));
+                    bad_opts.push_back(make_pair(s, UNDEFINED));
                 }
                 
             }
@@ -117,14 +118,33 @@ bool OptParser::is_non_opt(std::string s) {
     return !(is_potential_long_opt(s) || is_potential_short_opt(s));
 }
 
-/*
+std::string OptParser::error_string(std::string opt, int error_code) {
+    switch (error_code){
+        case UNDEFINED:
+            return opt + " is undefined!\n";
+            break;
+        case NO_ARGUMENT:
+            return "Cannot find an argument for " + opt + "!\n";
+            break;
+        default:
+            return "UNKNOWN ERROR CODE\n";
+            break;
+    }
+}
+
+
 //For debugging, will be deleted
+/*
 int main(int argc, char** argv) {
     std::unordered_map<std::string, bool> m = {{"h", false}, {"version", false}, {"test", true}, {"test2", true}};
     std::vector<std::string> non_opts;
-    std::vector<std::pair<std::string, std::string>> bad_opts;
+    std::vector<std::pair<std::string, int>> bad_opts;
     OptParser p(m);
-    auto opts = p.parse(argc, argv, non_opts, bad_opts);
+    std::string argv_string[argc];
+    for (int i =0; i<argc; i++) {
+        argv_string[i] = argv[i];
+    }
+    auto opts = p.parse(argc, argv_string, non_opts, bad_opts);
     std::cout << "--------options-------\n";
     for (auto p:opts) {
         std::cout << p.first << " " << p.second << "\n";
@@ -138,4 +158,5 @@ int main(int argc, char** argv) {
         std::cout << p.first << " " << p.second << "\n";
     }
 
-}*/
+}
+*/

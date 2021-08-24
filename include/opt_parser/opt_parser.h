@@ -20,18 +20,22 @@ a bad option.
 */
 
 
+const int NO_ARGUMENT = 0;
+const int UNDEFINED = 1;
+
 
 class OptParser {
 
 private:
     std::unordered_map<std::string, bool> options;
     
+    static std::string error_string(std::string opt, int error_code);
     
 public:         
     
     OptParser(std::unordered_map<std::string, bool> options);
     
-    std::vector<std::pair<std::string, std::string>> parse(int argc, std::string argv[], std::vector<std::string>& non_opts, std::vector<std::pair<std::string, std::string>>& bad_opts);
+    std::vector<std::pair<std::string, std::string>> parse(int argc, std::string argv[], std::vector<std::string>& non_opts, std::vector<std::pair<std::string, int>>& bad_opts);
 
     bool is_potential_short_opt(std::string s);
     
