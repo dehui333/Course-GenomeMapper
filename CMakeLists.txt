@@ -11,9 +11,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable(mist_mapper src/mist_mapper.cpp)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/config.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/include/config.h")
 
-# directory to get the header files to include
-target_include_directories(mist_mapper PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
-
 # add googletest
 include(FetchContent)
 FetchContent_Declare(
@@ -24,6 +21,19 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+
+# directory to get the header files to include
+target_include_directories(mist_mapper PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(mist_mapper PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/OptParser")
+target_include_directories(mist_mapper PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/FastaParser")
+
+
 # add subdirectories
 add_subdirectory(test)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/OptParser")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/FastaParser")
 
+
+#add libraries
+target_link_libraries(mist_mapper PRIVATE OptParser)
+target_link_libraries(mist_mapper PRIVATE FastaParser)

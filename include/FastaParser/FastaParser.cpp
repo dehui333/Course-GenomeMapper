@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-#include "fasta_parser.h"
+#include "FastaParser.h"
 
 
 void FastaParser::parse(std::string path) {

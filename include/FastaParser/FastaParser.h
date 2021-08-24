@@ -14,7 +14,7 @@ class FastaParser {
         std::vector<std::pair<std::string, std::string>> sequences;
         float average_L = 0;
         int max_L = 0;
-        int min_L = INT_MAX;
+        int min_L = INT8_MAX;
         
         void parse(std::string path);    
         

@@ -18,18 +18,14 @@ after it is not defined, it is considered a bad option. If it is defined but not
 a bad option. 
 3. Strings that do not start with "-#" or "--#" are non options.
 */
-
-
 const int NO_ARGUMENT = 0;
 const int UNDEFINED = 1;
-
-
+  
 class OptParser {
 
 private:
     std::unordered_map<std::string, bool> options;
-    
-    static std::string error_string(std::string opt, int error_code);
+   
     
 public:         
     

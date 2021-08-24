@@ -1,6 +1,6 @@
 enable_testing()
 # directory to get the header files to include
-include_directories(PUBLIC "../include")
+include_directories(PUBLIC "../include/OptParser")
 
 
 add_executable(

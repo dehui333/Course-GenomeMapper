@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "opt_parser.h"
+#include "OptParser.h"
 
 
 OptParser::OptParser(std::unordered_map<std::string, bool> options) {
@@ -118,19 +118,7 @@ bool OptParser::is_non_opt(std::string s) {
     return !(is_potential_long_opt(s) || is_potential_short_opt(s));
 }
 
-std::string OptParser::error_string(std::string opt, int error_code) {
-    switch (error_code){
-        case UNDEFINED:
-            return opt + " is undefined!\n";
-            break;
-        case NO_ARGUMENT:
-            return "Cannot find an argument for " + opt + "!\n";
-            break;
-        default:
-            return "UNKNOWN ERROR CODE\n";
-            break;
-    }
-}
+
 
 
 //For debugging, will be deleted
