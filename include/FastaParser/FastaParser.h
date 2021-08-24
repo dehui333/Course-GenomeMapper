@@ -21,7 +21,7 @@ class FastaParser {
     public:
         FastaParser(std::string path);
         std::pair<std::string, std::string> get_sequence(int index);
-        int num_sequences();
+        size_t num_sequences();
         
         
     
