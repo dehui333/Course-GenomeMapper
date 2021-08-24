@@ -54,7 +54,7 @@ std::pair<std::string, std::string> FastaParser::get_sequence(int index) {
     return sequences[index];
 }
 
-int FastaParser::num_sequences() {
+size_t FastaParser::num_sequences() {
     return sequences.size();
 }
 
