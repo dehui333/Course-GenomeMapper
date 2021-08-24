@@ -13,7 +13,7 @@ void FastaParser::parse(std::string path) {
     std::string store_buffer_name;
     std::string store_buffer_sequence = "";
     int index = 1;
-    while (getline(input_file, read_buffer)) {
+    while (std::getline(input_file, read_buffer)) {
         if (read_buffer[0] == '>') {
             store_buffer_name = read_buffer.substr(1);
             if (store_buffer_sequence != "") {
