@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macos-11, ubuntu-20.04, windows-2019]
+        os: [macos-11, ubuntu-20.04]
         #removed windows due to problem with zlib(bug with cmake?)
         compiler: [g++, clang++]
   
