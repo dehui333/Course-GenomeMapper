@@ -1,6 +1,5 @@
 #include <climits>
 #include <fstream>
-#include <getopt.h>
 #include <iostream>
 #include <string>
 
