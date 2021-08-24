@@ -39,6 +39,21 @@ void process_opts(std::vector<std::pair<std::string, std::string>>& opts, std::v
 
 void process_non_opts(std::vector<std::string>& non_opts) {
     
+    if (non_opts.empty()) {
+        return;
+    }
+    FastaParser* ref = new FastaParser();
+    FastaParser* reads = new FastaParser();
+    ref->parse(non_opts[0]);
+    for (int i = 1; i < non_opts.size(); i++) {
+        reads->parse(non_opts[i]);
+    }
+    std::cerr << "Number of reference sequences: " << ref->num_sequences() << "\n";
+    std::cerr << "Number of read sequences: " << reads->num_sequences() << "\n";
+    
+    delete ref;
+    delete reads;
+    
 }
 
 int main(int argc, char** argv) {
