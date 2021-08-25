@@ -19,7 +19,7 @@ jobs:
       matrix:
         os: [ubuntu-18.04, ubuntu-20.04, macos-10.15, macos-11]
         #removed windows due to problem with zlib(bug with cmake?)
-        compiler: [gcc, clang]
+        compiler: [clang++, g++]
   
     # The CMake configure and build commands are platform agnostic and should work equally
     # well on Windows or Mac.  You can convert this to a matrix build if you need
