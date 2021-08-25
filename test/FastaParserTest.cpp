@@ -5,7 +5,7 @@
 
 
 TEST(FastaParserTest, ParsingTest1) {
-    std::string prefix = "../../data/";
+    std::string prefix = "../../test_data/";
     FastaParser* reads = new FastaParser();
     reads->parse(prefix + "test1.fasta");
     ASSERT_EQ(reads->num_sequences(), 2);
