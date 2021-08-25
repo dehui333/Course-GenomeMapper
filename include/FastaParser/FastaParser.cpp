@@ -11,7 +11,6 @@ void FastaParser::parse(std::string path) {
     std::string read_buffer;
     std::string store_buffer_name;
     std::string store_buffer_sequence = "";
-    int index = 1;
     while (getline(input_file, read_buffer)) {
         if (read_buffer[0] == '>') {
          
@@ -37,7 +36,7 @@ void FastaParser::parse(std::string path) {
     if (store_buffer_sequence != "") {
                 std::pair<std::string, std::string> p (store_buffer_name, store_buffer_sequence);
                 sequences.push_back(p);
-                average_L += (p.second.size() - average_L) / index;
+                average_L += (p.second.size() - average_L) / index++;
                 if (p.second.size() > max_L) {
                     max_L = p.second.size();
                 } 
@@ -50,8 +49,8 @@ void FastaParser::parse(std::string path) {
 }
     
 
-std::pair<std::string, std::string> FastaParser::get_sequence(int index) {
-    return sequences[index];
+std::pair<std::string, std::string> FastaParser::get_sequence(int i) {
+    return sequences[i];
 }
 
 size_t FastaParser::num_sequences() {
@@ -59,14 +58,21 @@ size_t FastaParser::num_sequences() {
 }
 /*
 int main(int argc, char** argv) {
-    //FastaParser* ref = new FastaParser();
+    std::string prefix = "../../data/";
     FastaParser* reads = new FastaParser();
-    //ref->parse(argv[1]);
-    reads->parse(argv[1]);
-    //std::cerr << "Number of reference sequences: " << ref->num_sequences() << "\n";
-    std::cerr << "Number of read sequences: " << reads->num_sequences() << "\n";
-    //delete ref;
-    delete reads;
+    reads->parse(prefix + "test1.fasta");
+    std::cout << "num_sequences " << reads->num_sequences() << "\n";
+    std::cout << "min L " << reads->min_L << "\n";
+    std::cout << "max L " << reads->max_L << "\n";
+    std::cout << "avg L " << reads->average_L << "\n";
+    
+    reads->parse(prefix + "test2.fasta");
+    std::cout << "num_sequences " << reads->num_sequences() << "\n";
+    std::cout << "min L " << reads->min_L << "\n";
+    std::cout << "max L " << reads->max_L << "\n";
+    std::cout << "avg L " << reads->average_L << "\n";
+    delete reads;    
+    
 }
 */
 
