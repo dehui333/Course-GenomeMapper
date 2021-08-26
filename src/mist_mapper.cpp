@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <climits>
 #include <fstream>
 #include <iostream>
@@ -38,22 +39,94 @@ void process_opts(std::vector<std::pair<std::string, std::string>>& opts, std::v
     }
 }
 
+std::string get_file_extension(std::string file_path) {
+    size_t i = file_path.size() - 1;
+    std::string extension = "";
+    while (file_path[i] != '.') {
+        extension = file_path[i] + extension;
+        i--;
+        if (i < 0) {
+            std::cerr << "Input file should be of FASTA/FASTQ format!\n";
+        }
+    }
+    return extension;
+}
+
+void print_stats(FastaParser* ref, FastaParser* r1, FastqParser* r2) {
+    int max_L_reads;
+    int min_L_reads;
+    float average_L_reads;
+    size_t total_num_reads = r1->num_sequences() + r2->num_sequences();
+    max_L_reads = r1-> max_L >= r2->max_L ? r1->max_L : r2->max_L;
+    min_L_reads = r1-> min_L <= r2->min_L ? r1->min_L : r2->min_L;
+    size_t sum_L_reads = 0;
+    std::vector<std::pair<size_t, std::string>> to_sort;
+    to_sort.reserve(total_num_reads);
+    for (int i = 0; i < r1->num_sequences(); i++) {
+        std::string seq = r1->get_sequence(i);
+        size_t size = seq.size();
+        sum_L_reads += size;
+        to_sort.push_back(std::make_pair(-size, seq)); 
+    }
+    for (int i = 0; i < r2->num_sequences(); i++) {
+        std::string seq = r2->get_sequence(i);
+        size_t size = seq.size();
+        sum_L_reads += size;
+        to_sort.push_back(std::make_pair(-size, seq));
+    }
+    average_L_reads = static_cast<float>(sum_L_reads)/total_num_reads;
+    std::sort(to_sort.begin(), to_sort.end());
+    float half_way = static_cast<float>(sum_L_reads)/2;
+    float sum = 0;
+    size_t N50;
+    for (auto p:to_sort) {
+        sum+=-p.first;
+        if (sum >= half_way) {
+            N50 = -p.first;
+            break;
+        }
+        
+    }
+    
+    
+    std::cerr << "Reference sequence(s): \n";
+    std::cerr << "Num sequences: " << ref->num_sequences() << "\n";
+    std::cerr << "Min L: " << ref->min_L << "\n";
+    std::cerr << "Max L: " << ref->max_L << "\n";
+    std::cerr << "Avg L: " << static_cast<size_t>(ref->average_L) << "\n";
+    std::cerr << "Fragments: \n";
+    std::cerr << "Num sequences: "<< total_num_reads << "\n";
+    std::cerr << "Min L: " << min_L_reads << "\n";
+    std::cerr << "Max L: " << max_L_reads << "\n";
+    std::cerr << "Avg L: " << average_L_reads << "\n";
+    std::cerr << "N50: " << N50 << "\n";
+}
+
 void process_non_opts(std::vector<std::string>& non_opts) {
     
     if (non_opts.empty()) {
         return;
     }
-    BioSequenceParser* ref = new FastaParser();
-    BioSequenceParser* reads = new FastaParser();
+    FastaParser* ref = new FastaParser();
+    FastaParser* reads_fasta = new FastaParser();
+    FastqParser* reads_fastq = new FastqParser();
     ref->parse(non_opts[0]);
     for (int i = 1; i < non_opts.size(); i++) {
-        reads->parse(non_opts[i]);
+        std::string extension = get_file_extension(non_opts[i]);
+        if (extension == "fasta") {
+            reads_fasta->parse(non_opts[i]);        
+        } else if (extension == "fastq") {
+            reads_fastq->parse(non_opts[i]);
+        } else {
+            std::cerr << "Unknown file format: " << extension << "\n"; 
+        }
+        
     }
-    std::cerr << "Number of reference sequences: " << ref->num_sequences() << "\n";
-    std::cerr << "Number of read sequences: " << reads->num_sequences() << "\n";
+    print_stats(ref, reads_fasta, reads_fastq);
     
     delete ref;
-    delete reads;
+    delete reads_fasta;
+    delete reads_fastq;
     
 }
 
