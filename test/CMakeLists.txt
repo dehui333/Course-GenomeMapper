@@ -1,7 +1,7 @@
 enable_testing()
 # directory to get the header files to include
 include_directories(PUBLIC "../include/OptParser")
-include_directories(PUBLIC "../include/FastaParser")
+include_directories(PUBLIC "../include/BioSequenceParser")
 
 
 add_executable(
