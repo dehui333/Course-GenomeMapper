@@ -1,9 +1,6 @@
 #include <fstream>
 #include <iostream>
 
-#include <utility>
-#include <vector>
-
 #include "FastaParser.h"
 
 void FastaParser::parse(std::string path) {

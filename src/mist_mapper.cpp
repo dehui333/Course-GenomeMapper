@@ -5,6 +5,7 @@
 
 #include "config.h"
 #include "FastaParser.h"
+#include "FastqParser.h"
 #include "OptParser.h"
 
 bool print_version = false;

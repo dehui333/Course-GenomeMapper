@@ -26,14 +26,16 @@ FetchContent_MakeAvailable(googletest)
 target_include_directories(mist_mapper PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_include_directories(mist_mapper PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/OptParser")
 target_include_directories(mist_mapper PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/FastaParser")
-
+target_include_directories(mist_mapper PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/FastqParser")
 
 # add subdirectories
 add_subdirectory(test)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/OptParser")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/FastaParser")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/FastqParser")
 
 
 #add libraries
 target_link_libraries(mist_mapper PRIVATE OptParser)
 target_link_libraries(mist_mapper PRIVATE FastaParser)
+target_link_libraries(mist_mapper PRIVATE FastqParser)
