@@ -24,9 +24,21 @@ target_link_libraries(
   gtest_main
 )
 
+add_executable(
+  FastqParserTest
+  FastqParserTest.cpp
+)
+
+target_link_libraries(
+  FastqParserTest
+  gtest_main
+)
+
+
 
 
 
 include(GoogleTest)
 gtest_discover_tests(OptParserTest)
 gtest_discover_tests(FastaParserTest)
+gtest_discover_tests(FastqParserTest)
