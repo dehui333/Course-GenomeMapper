@@ -19,8 +19,12 @@ void FastqParser::parse(std::string path) {
 }
     
 
-std::tuple<std::string, std::string, std::string> FastqParser::get_sequence(int i) {
-    return sequences[i];
+std::string FastqParser::get_sequence(size_t i) {
+    return "";
+}
+
+std::string FastqParser::get_description(size_t i) {
+    return "";
 }
 
 size_t FastqParser::num_sequences() {

@@ -46,9 +46,14 @@ void FastaParser::parse(std::string path) {
 }
     
 
-std::pair<std::string, std::string> FastaParser::get_sequence(int i) {
-    return sequences[i];
+std::string FastaParser::get_sequence(size_t i) {
+    return sequences[i].second;
 }
+
+std::string FastaParser::get_description(size_t i) {
+    return sequences[i].first;
+}
+
 
 size_t FastaParser::num_sequences() {
     return sequences.size();

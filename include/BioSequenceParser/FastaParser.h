@@ -3,8 +3,9 @@
 #include <utility>
 #include <vector>
 
+#include "BioSequenceParser.h"
 
-class FastaParser {
+class FastaParser : public BioSequenceParser {
     
     private:
         std::vector<std::pair<std::string, std::string>> sequences;
@@ -18,7 +19,8 @@ class FastaParser {
         size_t min_L = SIZE_MAX;
     
         void parse(std::string path);  
-        std::pair<std::string, std::string> get_sequence(int index);
+        std::string get_sequence(size_t index);
+        std::string get_description(size_t index);
         size_t num_sequences();
         
         
