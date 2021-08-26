@@ -15,7 +15,7 @@ void FastaParser::parse(std::string path) {
                 std::pair<std::string, std::string> p (store_buffer_name, store_buffer_sequence);
                 sequences.push_back(p);
                 store_buffer_sequence = "";
-                average_L += (p.second.size() - average_L) / index++;
+                average_L += (p.second.size() - average_L) / sequences.size();
                 if (p.second.size() > max_L) {
                     max_L = p.second.size();
                 } 
@@ -33,7 +33,7 @@ void FastaParser::parse(std::string path) {
     if (store_buffer_sequence != "") {
                 std::pair<std::string, std::string> p (store_buffer_name, store_buffer_sequence);
                 sequences.push_back(p);
-                average_L += (p.second.size() - average_L) / index++;
+                average_L += (p.second.size() - average_L) / sequences.size();
                 if (p.second.size() > max_L) {
                     max_L = p.second.size();
                 } 

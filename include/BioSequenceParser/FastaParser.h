@@ -9,7 +9,6 @@ class FastaParser : public BioSequenceParser {
     
     private:
         std::vector<std::pair<std::string, std::string>> sequences;
-        int index = 1;
         
           
         

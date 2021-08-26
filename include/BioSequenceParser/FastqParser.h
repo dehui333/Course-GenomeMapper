@@ -9,7 +9,6 @@ class FastqParser : public BioSequenceParser {
     
     private:
         std::vector<std::tuple<std::string, std::string, std::string>> sequences;
-        int index = 1;
         
           
         
@@ -21,6 +20,7 @@ class FastqParser : public BioSequenceParser {
         void parse(std::string path);  
         std::string get_sequence(size_t index);
         std::string get_description(size_t index);
+        std::string get_quality(size_t index);
         size_t num_sequences();
         
         
