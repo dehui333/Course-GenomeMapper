@@ -3,7 +3,7 @@
 
 #include "fasta_parser.h"
 
-void FastaParser::parse(std::string path) {
+void FastaParser::Parse(std::string path) {
     std::ifstream input_file(path);
     std::string read_buffer;
     std::string store_buffer_name;
@@ -13,14 +13,14 @@ void FastaParser::parse(std::string path) {
          
             if (store_buffer_sequence != "") {
                 std::pair<std::string, std::string> p (store_buffer_name, store_buffer_sequence);
-                sequences.push_back(p);
+                sequences_.push_back(p);
                 store_buffer_sequence = "";
-                average_L += (p.second.size() - average_L) / sequences.size();
-                if (p.second.size() > max_L) {
-                    max_L = p.second.size();
+                average_L_ += (p.second.size() - average_L_) / sequences_.size();
+                if (p.second.size() > max_L_) {
+                    max_L_ = p.second.size();
                 } 
-                if (p.second.size() < min_L) {
-                    min_L = p.second.size();    
+                if (p.second.size() < min_L_) {
+                    min_L_ = p.second.size();    
                 }
             }
             store_buffer_name = read_buffer.substr(1);
@@ -32,13 +32,13 @@ void FastaParser::parse(std::string path) {
     }
     if (store_buffer_sequence != "") {
                 std::pair<std::string, std::string> p (store_buffer_name, store_buffer_sequence);
-                sequences.push_back(p);
-                average_L += (p.second.size() - average_L) / sequences.size();
-                if (p.second.size() > max_L) {
-                    max_L = p.second.size();
+                sequences_.push_back(p);
+                average_L_ += (p.second.size() - average_L_) / sequences_.size();
+                if (p.second.size() > max_L_) {
+                    max_L_ = p.second.size();
                 } 
-                if (p.second.size() < min_L) {
-                    min_L = p.second.size();    
+                if (p.second.size() < min_L_) {
+                    min_L_ = p.second.size();    
                 }
     }
     
@@ -46,39 +46,27 @@ void FastaParser::parse(std::string path) {
 }
     
 
-std::string FastaParser::get_sequence(size_t i) {
-    return sequences[i].second;
+std::string FastaParser::GetSequence(size_t i) {
+    return sequences_[i].second;
 }
 
-std::string FastaParser::get_description(size_t i) {
-    return sequences[i].first;
+std::string FastaParser::GetDescription(size_t i) {
+    return sequences_[i].first;
 }
 
 
-size_t FastaParser::num_sequences() {
-    return sequences.size();
+size_t FastaParser::NumSequences() {
+    return sequences_.size();
 }
-/*
-int main(int argc, char** argv) {
-    std::string prefix = "../../data/";
-    FastaParser* reads = new FastaParser();
-    reads->parse(prefix + "test1.fasta");
-    std::cout << "num_sequences " << reads->num_sequences() << "\n";
-    std::cout << "min L " << reads->min_L << "\n";
-    std::cout << "max L " << reads->max_L << "\n";
-    std::cout << "avg L " << reads->average_L << "\n";
-    
-    reads->parse(prefix + "test2.fasta");
-    std::cout << "num_sequences " << reads->num_sequences() << "\n";
-    std::cout << "min L " << reads->min_L << "\n";
-    std::cout << "max L " << reads->max_L << "\n";
-    std::cout << "avg L " << reads->average_L << "\n";
-    delete reads;    
-    
+
+size_t FastaParser::MaxL() {
+    return max_L_;
 }
-*/
 
+size_t FastaParser::MinL() {
+    return min_L_;
+}
 
-
-
-    
+float FastaParser::AverageL() {
+    return average_L_;
+}

@@ -8,19 +8,21 @@
 class FastaParser : public BiosequenceParser {
     
     private:
-        std::vector<std::pair<std::string, std::string>> sequences;
-        
+        std::vector<std::pair<std::string, std::string>> sequences_;
+        float average_L_ = 0;
+        size_t max_L_ = 0;
+        size_t min_L_ = SIZE_MAX;
+    
           
         
     public:
-        float average_L = 0;
-        size_t max_L = 0;
-        size_t min_L = SIZE_MAX;
-    
-        void parse(std::string path);  
-        std::string get_sequence(size_t index);
-        std::string get_description(size_t index);
-        size_t num_sequences();
+        void Parse(std::string path);  
+        std::string GetSequence(size_t index);
+        std::string GetDescription(size_t index);
+        size_t NumSequences();
+        size_t MaxL();
+        size_t MinL();
+        float AverageL();
         
         
     

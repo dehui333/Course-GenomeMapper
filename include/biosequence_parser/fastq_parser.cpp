@@ -3,7 +3,7 @@
 
 #include "fastq_parser.h"
 
-void FastqParser::parse(std::string path) {
+void FastqParser::Parse(std::string path) {
     
     std::ifstream input_file(path);
     std::string read_buffer;
@@ -26,13 +26,13 @@ void FastqParser::parse(std::string path) {
                 break;
             case 3:
                 store_buffer_quality = read_buffer;
-                sequences.push_back(std::make_tuple(store_buffer_name, store_buffer_sequence, store_buffer_quality));
-                average_L += (store_buffer_sequence.size() - average_L) / sequences.size();
-                if (store_buffer_sequence.size() > max_L) {
-                    max_L = store_buffer_sequence.size();
+                sequences_.push_back(std::make_tuple(store_buffer_name, store_buffer_sequence, store_buffer_quality));
+                average_L_ += (store_buffer_sequence.size() - average_L_) / sequences_.size();
+                if (store_buffer_sequence.size() > max_L_) {
+                    max_L_ = store_buffer_sequence.size();
                 } 
-                if (store_buffer_sequence.size() < min_L) {
-                    min_L = store_buffer_sequence.size();    
+                if (store_buffer_sequence.size() < min_L_) {
+                    min_L_ = store_buffer_sequence.size();    
                 }
                 phase = 0;
                 break;
@@ -50,42 +50,30 @@ void FastqParser::parse(std::string path) {
 }
     
 
-std::string FastqParser::get_sequence(size_t i) {
-    return std::get<1>(sequences[i]);
+std::string FastqParser::GetSequence(size_t i) {
+    return std::get<1>(sequences_[i]);
 }
 
-std::string FastqParser::get_description(size_t i) {
-    return std::get<0>(sequences[i]);
+std::string FastqParser::GetDescription(size_t i) {
+    return std::get<0>(sequences_[i]);
 }
 
-std::string FastqParser::get_quality(size_t i) {
-    return std::get<2>(sequences[i]);
+std::string FastqParser::GetQuality(size_t i) {
+    return std::get<2>(sequences_[i]);
 }
 
-size_t FastqParser::num_sequences() {
-    return sequences.size();
+size_t FastqParser::NumSequences() {
+    return sequences_.size();
 }
-/*
-int main(int argc, char** argv) {
-    std::string prefix = "../../data/";
-    FastaParser* reads = new FastaParser();
-    reads->parse(prefix + "test1.fasta");
-    std::cout << "num_sequences " << reads->num_sequences() << "\n";
-    std::cout << "min L " << reads->min_L << "\n";
-    std::cout << "max L " << reads->max_L << "\n";
-    std::cout << "avg L " << reads->average_L << "\n";
-    
-    reads->parse(prefix + "test2.fasta");
-    std::cout << "num_sequences " << reads->num_sequences() << "\n";
-    std::cout << "min L " << reads->min_L << "\n";
-    std::cout << "max L " << reads->max_L << "\n";
-    std::cout << "avg L " << reads->average_L << "\n";
-    delete reads;    
-    
+
+size_t FastqParser::MaxL() {
+    return max_L_;
 }
-*/
 
+size_t FastqParser::MinL() {
+    return min_L_;
+}
 
-
-
-    
+float FastqParser::AverageL() {
+    return average_L_;
+}
