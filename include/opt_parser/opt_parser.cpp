@@ -4,20 +4,20 @@
 
 
 OptParser::OptParser(std::unordered_map<std::string, bool> options) {
-    this->options = options;
+    this->options_ = options;
 }    
 
-std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, std::string argv[], std::vector<std::string>& non_opts, std::vector<std::pair<std::string, int>>& bad_opts) {
+std::vector<std::pair<std::string, std::string>> OptParser::Parse(int argc, std::string argv[], std::vector<std::string>& non_opts, std::vector<std::pair<std::string, int>>& bad_opts) {
     std::vector<std::pair<std::string, std::string>> opts;
     bool needs_argument;
     for (int i = 1; i < argc; i++) {
         std::string s = argv[i];
-        if (is_non_opt(s)) {
+        if (IsNonOpt(s)) {
             non_opts.push_back(s);
             
         } else {
-            if (is_potential_short_opt(s)) {
-                if (is_short_opt(s, needs_argument)) {
+            if (IsPotentialShortOpt(s)) {
+                if (IsShortOpt(s, needs_argument)) {
                     std::string opt_code = s.substr(1);
                     if (!needs_argument) {
                         opts.push_back(make_pair(opt_code, ""));
@@ -26,22 +26,22 @@ std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, std:
                     
                     i++;
                     if (i >= argc) {
-                        bad_opts.push_back(make_pair(s, NO_ARGUMENT));
+                        bad_opts.push_back(make_pair(s, KNoArgument));
                         break;
                     }
                     std::string potential_argument = argv[i];
-                    if (is_non_opt(potential_argument)) {
+                    if (IsNonOpt(potential_argument)) {
                         opts.push_back(make_pair(opt_code, potential_argument));
                     } else {
-                        bad_opts.push_back(make_pair(s, NO_ARGUMENT));
+                        bad_opts.push_back(make_pair(s, KNoArgument));
                         i--;
                     }
                 } else {
-                    bad_opts.push_back(make_pair(s, UNDEFINED));
+                    bad_opts.push_back(make_pair(s, KUndefined));
                 }
                 
-            } else if (is_potential_long_opt(s)) {
-                if (is_long_opt(s, needs_argument)) {
+            } else if (IsPotentialLongOpt(s)) {
+                if (IsLongOpt(s, needs_argument)) {
                     std::string opt_code = s.substr(2);
                     if (!needs_argument) {
                         opts.push_back(make_pair(opt_code, ""));
@@ -49,18 +49,18 @@ std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, std:
                     }
                     i++;
                     if (i >= argc) {
-                        bad_opts.push_back(make_pair(s, NO_ARGUMENT));
+                        bad_opts.push_back(make_pair(s, KUndefined));
                         break;
                     }
                     std::string potential_argument = argv[i];
-                    if (is_non_opt(potential_argument)) {
+                    if (IsNonOpt(potential_argument)) {
                         opts.push_back(make_pair(opt_code, potential_argument));
                     } else {
-                        bad_opts.push_back(make_pair(s, NO_ARGUMENT));
+                        bad_opts.push_back(make_pair(s, KNoArgument));
                         i--;
                     }
                 } else {
-                    bad_opts.push_back(make_pair(s, UNDEFINED));
+                    bad_opts.push_back(make_pair(s, KUndefined));
                 }
                 
             }
@@ -71,27 +71,27 @@ std::vector<std::pair<std::string, std::string>> OptParser::parse(int argc, std:
     return opts;
 }
 
-bool OptParser::is_potential_short_opt(std::string s) {
+bool OptParser::IsPotentialShortOpt(std::string s) {
    if (s.size() < 2) {
        return false;
    }
    return s[0] == '-' && isalpha(s[1]);
 }
 
-bool OptParser::is_potential_long_opt(std::string s) {
+bool OptParser::IsPotentialLongOpt(std::string s) {
     if (s.size() < 3) {
         return false;
     }
     return s[0] == '-' && s[1] == '-' && isalpha(s[2]);
 }
 
-bool OptParser::is_short_opt(std::string s, bool& needs_argument) {
-    if (!is_potential_short_opt(s) || s.size() > 2) {
+bool OptParser::IsShortOpt(std::string s, bool& needs_argument) {
+    if (!IsPotentialShortOpt(s) || s.size() > 2) {
         return false;
     }
     std::string potential_opt = s.substr(1);
-    auto iter = options.find(potential_opt);
-    if (iter != options.end()) {
+    auto iter = options_.find(potential_opt);
+    if (iter != options_.end()) {
         needs_argument = iter->second;
         return true;
     } else {
@@ -100,13 +100,13 @@ bool OptParser::is_short_opt(std::string s, bool& needs_argument) {
     
 }
 
-bool OptParser::is_long_opt(std::string s, bool& needs_argument) {
-    if (!is_potential_long_opt(s) || s.size() < 4) {
+bool OptParser::IsLongOpt(std::string s, bool& needs_argument) {
+    if (!IsPotentialLongOpt(s) || s.size() < 4) {
         return false;
     }
     std::string potential_opt = s.substr(2);
-    auto iter = options.find(potential_opt);
-    if (iter != options.end()) {
+    auto iter = options_.find(potential_opt);
+    if (iter != options_.end()) {
         needs_argument = iter->second;
         return true;
     } else {
@@ -114,37 +114,6 @@ bool OptParser::is_long_opt(std::string s, bool& needs_argument) {
     }
 }
 
-bool OptParser::is_non_opt(std::string s) {
-    return !(is_potential_long_opt(s) || is_potential_short_opt(s));
+bool OptParser::IsNonOpt(std::string s) {
+    return !(IsPotentialLongOpt(s) || IsPotentialShortOpt(s));
 }
-
-
-
-
-//For debugging, will be deleted
-/*
-int main(int argc, char** argv) {
-    std::unordered_map<std::string, bool> m = {{"h", false}, {"version", false}, {"test", true}, {"test2", true}};
-    std::vector<std::string> non_opts;
-    std::vector<std::pair<std::string, int>> bad_opts;
-    OptParser p(m);
-    std::string argv_string[argc];
-    for (int i =0; i<argc; i++) {
-        argv_string[i] = argv[i];
-    }
-    auto opts = p.parse(argc, argv_string, non_opts, bad_opts);
-    std::cout << "--------options-------\n";
-    for (auto p:opts) {
-        std::cout << p.first << " " << p.second << "\n";
-    }
-    std::cout << "--------non opts--------\n";
-    for (auto s: non_opts) {
-        std::cout << s << "\n"; 
-    }
-    std::cout << "---------bad opts--------\n";
-    for (auto p:bad_opts) {
-        std::cout << p.first << " " << p.second << "\n";
-    }
-
-}
-*/

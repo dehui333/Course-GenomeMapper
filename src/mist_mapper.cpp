@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "align.h"
 #include "config.h"
 #include "fasta_parser.h"
 #include "fastq_parser.h"
@@ -12,12 +13,12 @@
 bool print_version = false;
 bool print_help = false;
 
-std::string error_string(std::string opt, int error_code) {
+std::string ErrorString(std::string opt, int error_code) {
     switch (error_code){
-        case UNDEFINED:
+        case KUndefined:
             return opt + " is undefined!\n";
             break;
-        case NO_ARGUMENT:
+        case KNoArgument:
             return "Cannot find an argument for " + opt + "!\n";
             break;
         default:
@@ -26,7 +27,7 @@ std::string error_string(std::string opt, int error_code) {
     }
 }
 
-void process_opts(std::vector<std::pair<std::string, std::string>>& opts, std::vector<std::pair<std::string, int>>& bad_opts) {
+void ProcessOpts(std::vector<std::pair<std::string, std::string>>& opts, std::vector<std::pair<std::string, int>>& bad_opts) {
     for (auto p: opts) {
         if (p.first == "h") {
             print_help = true;
@@ -35,7 +36,7 @@ void process_opts(std::vector<std::pair<std::string, std::string>>& opts, std::v
         }
     }
     for (auto p: bad_opts) {
-        std::cerr << error_string(p.first, p.second);
+        std::cerr << ErrorString(p.first, p.second);
     }
 }
 
@@ -102,7 +103,7 @@ void print_stats(FastaParser* ref, FastaParser* r1, FastqParser* r2) {
     std::cerr << "N50: " << N50 << "\n";
 }
 
-void process_non_opts(std::vector<std::string>& non_opts) {
+void ProcessNonOpts(std::vector<std::string>& non_opts) {
     
     if (non_opts.empty()) {
         return;
@@ -140,9 +141,9 @@ int main(int argc, char** argv) {
     for (int i = 0; i < argc; i++) {
         argv_string[i] = argv[i];
     }
-    auto opts = p.parse(argc, argv_string, non_opts, bad_opts);
-    process_opts(opts, bad_opts);
-    process_non_opts(non_opts);
+    auto opts = p.Parse(argc, argv_string, non_opts, bad_opts);
+    ProcessOpts(opts, bad_opts);
+    ProcessNonOpts(non_opts);
     
     if (print_version) {
         std::cout << "The current version is " << VERSION_MAJOR << "." << VERSION_MINOR << "." << VERSION_PATCH << "\n";

@@ -12,7 +12,7 @@ TEST(OptParserTest, ParsingTest1) {
     bad_opts.clear();
     int argc = 2;
     std::string argv[] = {"", "-h"};    
-    auto opts = p.parse(argc, argv, non_opts, bad_opts);
+    auto opts = p.Parse(argc, argv, non_opts, bad_opts);
     std::vector<std::string> non_opts_answer;
     ASSERT_EQ(non_opts, non_opts_answer);
     std::vector<std::pair<std::string, std::string>> opts_answer = {{"h", ""}};
@@ -26,12 +26,12 @@ TEST(OptParserTest, ParsingTest2) {
     bad_opts.clear();
     int argc = 4;
     std::string argv[] = {"", "-h", "--test", "-test"};    
-    auto opts = p.parse(argc, argv, non_opts, bad_opts);
+    auto opts = p.Parse(argc, argv, non_opts, bad_opts);
     std::vector<std::string> non_opts_answer;
     ASSERT_EQ(non_opts, non_opts_answer);
     std::vector<std::pair<std::string, std::string>> opts_answer = {{"h", ""}};
     ASSERT_EQ(opts, opts_answer);
-    std::vector<std::pair<std::string, int>> bad_opts_answer = {{"--test", NO_ARGUMENT}, {"-test", UNDEFINED}};
+    std::vector<std::pair<std::string, int>> bad_opts_answer = {{"--test", KNoArgument}, {"-test", KUndefined}};
     ASSERT_EQ(bad_opts, bad_opts_answer);    
 }
 
@@ -40,12 +40,12 @@ TEST(OptParserTest, ParsingTest3) {
     bad_opts.clear();
     int argc = 4;
     std::string argv[] = {"", "-h", "--test", "--xxx"};    
-    auto opts = p.parse(argc, argv, non_opts, bad_opts);
+    auto opts = p.Parse(argc, argv, non_opts, bad_opts);
     std::vector<std::string> non_opts_answer;
     ASSERT_EQ(non_opts, non_opts_answer);
     std::vector<std::pair<std::string, std::string>> opts_answer = {{"h", ""}};
     ASSERT_EQ(opts, opts_answer);
-    std::vector<std::pair<std::string, int>> bad_opts_answer = {{"--test", NO_ARGUMENT}, {"--xxx", UNDEFINED}};
+    std::vector<std::pair<std::string, int>> bad_opts_answer = {{"--test", KNoArgument}, {"--xxx", KUndefined}};
     ASSERT_EQ(bad_opts, bad_opts_answer);    
 }
 
@@ -54,7 +54,7 @@ TEST(OptParserTest, ParsingTest4) {
     bad_opts.clear();
     int argc = 4;
     std::string argv[] = {"", "-h", "--test", "-123"};    
-    auto opts = p.parse(argc, argv, non_opts, bad_opts);
+    auto opts = p.Parse(argc, argv, non_opts, bad_opts);
     std::vector<std::string> non_opts_answer;
     ASSERT_EQ(non_opts, non_opts_answer);
     std::vector<std::pair<std::string, std::string>> opts_answer = {{"h", ""}, {"test", "-123"}};
@@ -68,11 +68,11 @@ TEST(OptParserTest, ParsingTest5) {
     bad_opts.clear();
     int argc = 4;
     std::string argv[] = {"", "-h", "--test", "-c"};    
-    auto opts = p.parse(argc, argv, non_opts, bad_opts);
+    auto opts = p.Parse(argc, argv, non_opts, bad_opts);
     std::vector<std::string> non_opts_answer;
     ASSERT_EQ(non_opts, non_opts_answer);
     std::vector<std::pair<std::string, std::string>> opts_answer = {{"h", ""}, {"c", ""}};
     ASSERT_EQ(opts, opts_answer);
-    std::vector<std::pair<std::string, int>> bad_opts_answer = {{"--test", NO_ARGUMENT}};
+    std::vector<std::pair<std::string, int>> bad_opts_answer = {{"--test", KNoArgument}};
     ASSERT_EQ(bad_opts, bad_opts_answer);    
 }
