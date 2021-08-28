@@ -1,6 +1,6 @@
 enable_testing()
 # directory to get the header files to include
-include_directories(PUBLIC "../include/opt_Parser")
+include_directories(PUBLIC "../include/opt_parser")
 include_directories(PUBLIC "../include/biosequence_parser")
 
 
