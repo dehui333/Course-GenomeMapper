@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "FastqParser.cpp"
+#include "fastq_parser.cpp"
 
 
 

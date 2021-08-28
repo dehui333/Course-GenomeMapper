@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
-#include "OptParser.cpp"
+
+#include "opt_parser.cpp"
 
 std::unordered_map<std::string, bool> m = {{"h", false}, {"version", false}, {"test", true}, {"test2", true}, {"c", false}};
 std::vector<std::string> non_opts;

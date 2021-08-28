@@ -25,14 +25,14 @@ FetchContent_MakeAvailable(googletest)
 # directory to get the header files to include
 target_include_directories(mist_mapper 
 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include"
-PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/OptParser"
-PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/BioSequenceParser"
+PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/opt_parser"
+PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/bio_sequence_parser"
 )
 
 # add subdirectories
 add_subdirectory(test)
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/OptParser")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/BioSequenceParser")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/opt_parser")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/bio_sequence_parser")
 
 #add libraries
 target_link_libraries(mist_mapper PRIVATE OptParser PRIVATE BioSequenceParser)

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "FastaParser.cpp"
+#include "fasta_parser.cpp"
 
 
 

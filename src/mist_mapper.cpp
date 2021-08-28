@@ -5,9 +5,9 @@
 #include <string>
 
 #include "config.h"
-#include "FastaParser.h"
-#include "FastqParser.h"
-#include "OptParser.h"
+#include "fasta_parser.h"
+#include "fastq_parser.h"
+#include "opt_parser.h"
 
 bool print_version = false;
 bool print_help = false;

@@ -1,14 +1,14 @@
 #pragma once
 
-#include <tuple>
+#include <utility>
 #include <vector>
 
-#include "BioSequenceParser.h"
+#include "bio_sequence_parser.h"
 
-class FastqParser : public BioSequenceParser {
+class FastaParser : public BioSequenceParser {
     
     private:
-        std::vector<std::tuple<std::string, std::string, std::string>> sequences;
+        std::vector<std::pair<std::string, std::string>> sequences;
         
           
         
@@ -20,7 +20,6 @@ class FastqParser : public BioSequenceParser {
         void parse(std::string path);  
         std::string get_sequence(size_t index);
         std::string get_description(size_t index);
-        std::string get_quality(size_t index);
         size_t num_sequences();
         
         

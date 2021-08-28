@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "FastaParser.h"
+#include "fasta_parser.h"
 
 void FastaParser::parse(std::string path) {
     std::ifstream input_file(path);

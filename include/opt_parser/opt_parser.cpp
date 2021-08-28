@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "OptParser.h"
+#include "opt_parser.h"
 
 
 OptParser::OptParser(std::unordered_map<std::string, bool> options) {

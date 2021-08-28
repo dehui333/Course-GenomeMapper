@@ -1,12 +1,12 @@
 enable_testing()
 # directory to get the header files to include
-include_directories(PUBLIC "../include/OptParser")
-include_directories(PUBLIC "../include/BioSequenceParser")
+include_directories(PUBLIC "../include/opt_Parser")
+include_directories(PUBLIC "../include/bio_sequence_parser")
 
 
 add_executable(
   OptParserTest
-  OptParserTest.cpp
+  opt_parser_test.cpp
 )
 
 target_link_libraries(
@@ -16,7 +16,7 @@ target_link_libraries(
 
 add_executable(
   FastaParserTest
-  FastaParserTest.cpp
+  fasta_parser_test.cpp
 )
 
 target_link_libraries(
@@ -26,7 +26,7 @@ target_link_libraries(
 
 add_executable(
   FastqParserTest
-  FastqParserTest.cpp
+  fastq_parser_test.cpp
 )
 
 target_link_libraries(

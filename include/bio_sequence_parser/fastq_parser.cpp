@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "FastqParser.h"
+#include "fastq_parser.h"
 
 void FastqParser::parse(std::string path) {
     
