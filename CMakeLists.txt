@@ -26,13 +26,13 @@ FetchContent_MakeAvailable(googletest)
 target_include_directories(mist_mapper 
 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include"
 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/opt_parser"
-PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/bio_sequence_parser"
+PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/biosequence_parser"
 )
 
 # add subdirectories
 add_subdirectory(test)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/opt_parser")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/bio_sequence_parser")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/biosequence_parser")
 
 #add libraries
-target_link_libraries(mist_mapper PRIVATE OptParser PRIVATE BioSequenceParser)
+target_link_libraries(mist_mapper PRIVATE opt_parser PRIVATE biosequence_parser)

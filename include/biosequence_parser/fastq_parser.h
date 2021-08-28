@@ -3,9 +3,9 @@
 #include <tuple>
 #include <vector>
 
-#include "bio_sequence_parser.h"
+#include "biosequence_parser.h"
 
-class FastqParser : public BioSequenceParser {
+class FastqParser : public BiosequenceParser {
     
     private:
         std::vector<std::tuple<std::string, std::string, std::string>> sequences;

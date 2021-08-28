@@ -1,6 +1,6 @@
 #pragma once
 
-class BioSequenceParser {
+class BiosequenceParser {
        
     public:
         virtual void parse(std::string path) = 0;  

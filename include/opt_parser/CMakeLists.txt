@@ -1,1 +1,1 @@
-add_library(OptParser opt_parser.cpp)
+add_library(opt_parser opt_parser.cpp)

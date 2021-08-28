@@ -3,9 +3,9 @@
 #include <utility>
 #include <vector>
 
-#include "bio_sequence_parser.h"
+#include "biosequence_parser.h"
 
-class FastaParser : public BioSequenceParser {
+class FastaParser : public BiosequenceParser {
     
     private:
         std::vector<std::pair<std::string, std::string>> sequences;
