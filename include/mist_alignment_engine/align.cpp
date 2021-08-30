@@ -67,6 +67,7 @@ namespace mist {
         int count = 0;
         std::string c = "";
         std::string current_c;
+        
         while (i != 0 || j != 0) {
             if (i == 0) {
                 j--;
@@ -98,7 +99,9 @@ namespace mist {
                 
             }
             if (current_c != c) {
-                    s += std::to_string(count) + c;
+                    if (count != 0) {
+                        s = std::to_string(count) + c + s;
+                    }
                     c = current_c;
                     count = 1;
             } else {
@@ -106,7 +109,9 @@ namespace mist {
             }
             
         }
-        s += std::to_string(count) + c;
+        if (count != 0) {
+            s = std::to_string(count) + c + s;
+        }
         *cigar = s;
         
             

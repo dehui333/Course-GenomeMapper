@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 
 enum class AlignmentType {global, local, semi_global};
