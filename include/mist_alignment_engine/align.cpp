@@ -13,7 +13,7 @@ namespace mist {
         int gap,
         std::string* cigar,
         unsigned int* target_begin) {
-        
+        /*
         switch (type) {
             
             case AlignmentType::global:
@@ -27,7 +27,7 @@ namespace mist {
                 break;
             default:
                 std::cerr << "Unknown alignment type\n";          
-        }
+        }*/
         
     }
     
