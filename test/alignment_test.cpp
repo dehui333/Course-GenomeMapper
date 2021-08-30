@@ -31,7 +31,7 @@ TEST(GlobalAlignmentTest, Insert) {
     ASSERT_EQ(target_begin, 0);
 }
 
-TEST(GlobalAlignmentTest, NotMatch) {
+TEST(GlobalAlignmentTest, Mismatch) {
     std::string cigar;
     unsigned int target_begin;
     int score = mist::Align("ATCG", 4, "ATCC", 4, AlignmentType::global, 1, -1, -1, &cigar, &target_begin);
@@ -49,7 +49,7 @@ TEST(GlobalAlignmentTest, DelAndInsAtEnds) {
     ASSERT_EQ(target_begin, 0);
 }
 
-TEST(GlobalAlignmentTest, NotMatchAtEnds) {
+TEST(GlobalAlignmentTest, MismatchAtEnds) {
     std::string cigar;
     unsigned int target_begin;
     int score = mist::Align("TTCGTT", 6, "AACGAA", 6, AlignmentType::global, 1, -1, -1, &cigar, &target_begin);
