@@ -40,7 +40,7 @@ namespace mist {
         std::string* cigar,
         unsigned int* target_begin) {
             
-      
+        
         int matrix[query_len + 1][target_len + 1];
         for (int i = 0; i <= query_len; i++) {
             for (int j = 0; j <= target_len; j++) {
@@ -61,6 +61,7 @@ namespace mist {
                 }
             }
         }
+        /*
         *target_begin = 0;
         std::string s = "";
         int i = query_len;
@@ -120,7 +121,8 @@ namespace mist {
         
             
         return matrix[query_len][target_len];     
-        
+        */
+        return 0;
         
     }
     
