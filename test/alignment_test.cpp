@@ -7,7 +7,7 @@
 TEST(GlobalAlignmentTest, AllMatch) {
     std::string cigar = "";
     unsigned int target_begin = 1;
-    int score = mist::Align("ATCG", 4, "ATCG", 4, AlignmentType::global, 1, -1, -1, &cigar, &target_begin);
+    int score = mist::Align("ATCG", 4, "ATCG", 4, AlignmentType::global, 1, -1, -1);
     //ASSERT_EQ(score , 4);
     //ASSERT_EQ(cigar, "4=");
     //ASSERT_EQ(target_begin, 0);
