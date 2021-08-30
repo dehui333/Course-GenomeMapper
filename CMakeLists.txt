@@ -28,6 +28,7 @@ PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include"
 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/opt_parser"
 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/biosequence_parser"
 PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/mist_alignment_engine"
+PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/mist_minimizer_engine"
 )
 
 # add subdirectories
@@ -35,6 +36,12 @@ add_subdirectory(test)
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/opt_parser")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/biosequence_parser")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/mist_alignment_engine")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/include/mist_minimizer_engine")
 
 #add libraries
-target_link_libraries(mist_mapper PRIVATE opt_parser PRIVATE biosequence_parser PRIVATE mist_alignment_engine)
+target_link_libraries(mist_mapper 
+PRIVATE opt_parser 
+PRIVATE biosequence_parser 
+PRIVATE mist_alignment_engine 
+PRIVATE mist_minimizer_engine
+)
