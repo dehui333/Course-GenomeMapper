@@ -32,16 +32,15 @@ namespace mist {
     }
     
     int AlignGlobal(  
-        const char* query1, unsigned int query_len,
-        const char* target1, unsigned int target_len,
+        const char* query, unsigned int query_len,
+        const char* target, unsigned int target_len,
         int match,
         int mismatch,
         int gap,
         std::string* cigar,
         unsigned int* target_begin) {
             
-        std::string query = query1;
-        std::string target = target1;
+      
         int matrix[query_len + 1][target_len + 1];
         for (int i = 0; i <= query_len; i++) {
             for (int j = 0; j <= target_len; j++) {
