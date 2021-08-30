@@ -40,7 +40,7 @@ namespace mist {
         std::string* cigar,
         unsigned int* target_begin) {
             
-        
+        /*
         int matrix[query_len + 1][target_len + 1];
         for (int i = 0; i <= query_len; i++) {
             for (int j = 0; j <= target_len; j++) {
@@ -50,7 +50,7 @@ namespace mist {
                     matrix[i][j] = i * gap;
                 } else {
                     //Last position
-                    /*
+                    
                     int match_score = query[i-1] == target[j-1] ? match : mismatch;
                     int if_match = match_score + matrix[i-1][j-1];
                     int if_del = gap + matrix[i-1][j];
@@ -58,10 +58,10 @@ namespace mist {
                     int max = if_match > if_del ? if_match : if_del;
                     max = max > if_ins ? max : if_ins;
                     matrix[i][j] = max;
-                    */
+                    
                 }
             }
-        }
+        }*/
         /*
         *target_begin = 0;
         std::string s = "";
