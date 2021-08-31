@@ -3,18 +3,6 @@
 #include "align.h"
 
 namespace mist {
-    /*
-    int Align2(  
-        const char* query, unsigned int query_len,
-        const char* target, unsigned int target_len,
-        AlignmentType type,
-        int match,
-        int mismatch,
-        int gap,
-        std::string* cigar,
-        unsigned int* target_begin) {
-        return 0;    
-    }*/
     
     int Align(  
         const char* query, unsigned int query_len,
@@ -25,21 +13,23 @@ namespace mist {
         int gap,
         std::string* cigar,
         unsigned int* target_begin) {
-        /*
+        
         switch (type) {
             
             case AlignmentType::global:
-                AlignGlobal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
+                return AlignGlobal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
                 break;
             case AlignmentType::local:
-                AlignLocal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
+                return AlignLocal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
                 break;
             case AlignmentType::semi_global:
-                AlignSemiGlobal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
+                return AlignSemiGlobal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
                 break;
             default:
-                std::cerr << "Unknown alignment type\n";          
-        }*/
+                std::cerr << "Unknown alignment type\n";
+                return -1;
+        }
+        
         
     }
     
@@ -52,7 +42,7 @@ namespace mist {
         std::string* cigar,
         unsigned int* target_begin) {
             
-        /*
+        
         int matrix[query_len + 1][target_len + 1];
         for (int i = 0; i <= query_len; i++) {
             for (int j = 0; j <= target_len; j++) {
@@ -73,8 +63,8 @@ namespace mist {
                     
                 }
             }
-        }*/
-        /*
+        }
+        
         *target_begin = 0;
         std::string s = "";
         int i = query_len;
@@ -134,7 +124,7 @@ namespace mist {
         
             
         return matrix[query_len][target_len];     
-        */
+        
         return 0;
         
     }
