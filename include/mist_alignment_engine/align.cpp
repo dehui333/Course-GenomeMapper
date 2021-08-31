@@ -3,7 +3,7 @@
 #include "align.h"
 
 namespace mist {
-    
+    /*
     int Align2(  
         const char* query, unsigned int query_len,
         const char* target, unsigned int target_len,
@@ -14,7 +14,7 @@ namespace mist {
         std::string* cigar,
         unsigned int* target_begin) {
         return 0;    
-    }
+    }*/
     
     int Align(  
         const char* query, unsigned int query_len,
