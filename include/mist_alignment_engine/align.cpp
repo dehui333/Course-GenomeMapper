@@ -66,8 +66,9 @@ namespace mist {
                 }
             }
         }
-        
-        *target_begin = 0;
+        if (target_begin != nullptr) {
+            *target_begin = 0;
+        }
         std::string s = "";
         int i = query_len;
         int j = target_len;
@@ -122,7 +123,9 @@ namespace mist {
         if (count != 0) {
             s = std::to_string(count) + c + s;
         }
-        *cigar = s;
+        if (cigar != nullptr) {
+            *cigar = s;
+        }
         
             
         return matrix[query_len][target_len];     
@@ -225,14 +228,18 @@ namespace mist {
                 count++;    
             }
             if (matrix[i][j] == 0) {
-                *target_begin = temp_j - 1;
+                if (target_begin != nullptr) {
+                    *target_begin = temp_j - 1;
+                }
             }
             
         }
         if (count != 0) {
             s = std::to_string(count) + c + s;
         }
-        *cigar = s;
+        if (cigar != nullptr) {
+            *cigar = s;
+        }
         
             
         return score;      
