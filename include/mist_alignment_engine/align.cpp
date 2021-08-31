@@ -44,8 +44,8 @@ namespace mist {
             
         
         int matrix[query_len + 1][target_len + 1];
-        for (int i = 0; i <= query_len; i++) {
-            for (int j = 0; j <= target_len; j++) {
+        for (unsigned int i = 0; i <= query_len; i++) {
+            for (unsigned int j = 0; j <= target_len; j++) {
                 if (i == 0) {
                     matrix[i][j] = j * gap;
                 } else if (j == 0) {
@@ -139,8 +139,8 @@ namespace mist {
         unsigned int* target_begin) {
             
         int matrix[query_len + 1][target_len + 1];
-        for (int i = 0; i <= query_len; i++) {
-            for (int j = 0; j <= target_len; j++) {
+        for (unsigned int i = 0; i <= query_len; i++) {
+            for (unsigned int j = 0; j <= target_len; j++) {
                 if (i == 0) {
                     matrix[i][j] = 0;
                 } else if (j == 0) {
@@ -159,11 +159,11 @@ namespace mist {
                 }
             }
         }
-        int i;
-        int j;
+        unsigned int i;
+        unsigned int j;
         int score = INT32_MIN;
-        for (int u = 0; u <= query_len; u++) {
-            for (int v = 0; v <= target_len; v++) {
+        for (unsigned int u = 0; u <= query_len; u++) {
+            for (unsigned int v = 0; v <= target_len; v++) {
                 if (matrix[u][v] > score) {
                     score = matrix[u][v];
                     i = u;
@@ -181,6 +181,7 @@ namespace mist {
         std::string current_c;
         
         while (matrix[i][j] != 0) {
+            unsigned int temp_j = j;
             if (i == 0) {
                 j--;
                 current_c = "D";
@@ -190,7 +191,7 @@ namespace mist {
                 current_c = "I";
                 
             } else {
-            
+                
                 //0 for move left, 1 for move up, 2 for move diagonal 
                 int move = 2;
                 if (matrix[i][j] == matrix[i][j-1] + gap) {
@@ -223,6 +224,9 @@ namespace mist {
             } else {
                 count++;    
             }
+            if (matrix[i][j] == 0) {
+                *target_begin = temp_j - 1;
+            }
             
         }
         if (count != 0) {
@@ -244,11 +248,10 @@ namespace mist {
         int gap,
         std::string* cigar,
         unsigned int* target_begin) {
-            
-        return 0;    
-            
+        return 0;
             
         }
+        
     
     
 }
