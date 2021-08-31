@@ -1,4 +1,6 @@
 #include <iostream>
+#include <utility>
+#include <vector>
 
 #include "align.h"
 
@@ -70,17 +72,17 @@ namespace mist {
         int i = query_len;
         int j = target_len;
         int count = 0;
-        std::string c = "";
-        std::string current_c;
+        char c = '?';
+        char current_c;
         
         while (i != 0 || j != 0) {
             if (i == 0) {
                 j--;
-                current_c = "D";
+                current_c = 'D';
                       
             } else if (j == 0) {
                 i--;
-                current_c = "I";
+                current_c = 'I';
                 
             } else {
                 //0 for move left, 1 for move up, 2 for move diagonal 
@@ -92,16 +94,16 @@ namespace mist {
                 }
                 if (move == 0) {
                     j--;
-                    current_c = "D";
+                    current_c = 'D';
                     
                 } else if (move == 1) {
                     i--;
-                    current_c = "I";
+                    current_c = 'I';
                     
                 } else {
                     i--;
                     j--;
-                    current_c = query[i] == target[j] ? "=" : "X";                 
+                    current_c = query[i] == target[j] ? '=' : 'X';                 
                     
                 }
                 
@@ -124,8 +126,6 @@ namespace mist {
         
             
         return matrix[query_len][target_len];     
-        
-        return 0;
         
     }
     
@@ -177,18 +177,18 @@ namespace mist {
         
         std::string s = "";
         int count = 0;
-        std::string c = "";
-        std::string current_c;
+        char c = '?';
+        char current_c;
         
         while (matrix[i][j] != 0) {
             unsigned int temp_j = j;
             if (i == 0) {
                 j--;
-                current_c = "D";
+                current_c = 'D';
                       
             } else if (j == 0) {
                 i--;
-                current_c = "I";
+                current_c = 'I';
                 
             } else {
                 
@@ -201,16 +201,16 @@ namespace mist {
                 }
                 if (move == 0) {
                     j--;
-                    current_c = "D";
+                    current_c = 'D';
                     
                 } else if (move == 1) {
                     i--;
-                    current_c = "I";
+                    current_c = 'I';
                     
                 } else {
                     i--;
                     j--;
-                    current_c = query[i] == target[j] ? "=" : "X";                 
+                    current_c = query[i] == target[j] ? '=' : 'X';                 
                     
                 }
                 
@@ -248,9 +248,36 @@ namespace mist {
         int gap,
         std::string* cigar,
         unsigned int* target_begin) {
-        return 0;
+        int score = AlignGlobal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
+        std::vector<std::pair<char, int>> chars; //chars in cigar and their positions
+        for (int i = 0; i < cigar->size(); i++) {
+            if (isalpha((*cigar)[i])) {
+                chars.push_back(std::make_pair((*cigar)[i], i));
+            }
+        }
+        if (chars[0].first == 'D' || chars[0].first == 'I') {
+            std::string num_string = cigar->substr(0, chars[0].second);
+            int number = std::stoi(num_string);
+            score -= number * gap;
             
         }
+        
+        int last_index = chars.size();
+        if (chars[last_index].first == 'D' || chars[last_index].first == 'I') {
+            if (chars[last_index].second == chars[0].second) {
+                return score;
+            }
+            int second_last_char_position = chars[last_index-1].second+1;
+            int l = cigar->size() - second_last_char_position - 1;
+            std::string num_string = cigar->substr(second_last_char_position, l);
+            int number = std::stoi(num_string);
+            score -= number * gap;
+            
+        }
+        
+        
+        return score;
+    }
         
     
     
