@@ -10,6 +10,7 @@ namespace mist {
         int match,
         int mismatch,
         int gap,
+        AlignmentType type,
         std::string* cigar,
         unsigned int* target_begin) {
         return 0;    
