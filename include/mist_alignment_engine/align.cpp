@@ -176,7 +176,8 @@ namespace mist {
                 
             }
 
-        }            
+        }
+        int num_S_right = query_len - i;    
         
         std::string s = "";
         int count = 0;
@@ -234,11 +235,21 @@ namespace mist {
             }
             
         }
+        int num_S_left = i;
         if (count != 0) {
             s = std::to_string(count) + c + s;
         }
+        std::string left_append = "";
+        std::string right_append = "";
+        if (num_S_left != 0) {
+            left_append = std::to_string(num_S_left) + "S";
+        }
+        if (num_S_right != 0) {
+            right_append = std::to_string(num_S_right) + "S";
+        }
+        
         if (cigar != nullptr) {
-            *cigar = s;
+            *cigar = left_append + s + right_append;
         }
         
             
