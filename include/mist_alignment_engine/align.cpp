@@ -267,20 +267,27 @@ namespace mist {
         std::string* cigar,
         unsigned int* target_begin) {
         int score = AlignGlobal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
+        if (cigar->empty()) {
+            return score;
+        }
         std::vector<std::pair<char, int>> chars; //chars in cigar and their positions
         for (int i = 0; i < cigar->size(); i++) {
-            if (isalpha((*cigar)[i])) {
+            
+            if (!isdigit((*cigar)[i])) {
                 chars.push_back(std::make_pair((*cigar)[i], i));
             }
         }
+
+        
         if (chars[0].first == 'D' || chars[0].first == 'I') {
             std::string num_string = cigar->substr(0, chars[0].second);
-            int number = std::stoi(num_string);
+            int number = stoi(num_string);
             score -= number * gap;
             
         }
         
-        int last_index = chars.size();
+        
+        int last_index = chars.size() - 1;
         if (chars[last_index].first == 'D' || chars[last_index].first == 'I') {
             if (chars[last_index].second == chars[0].second) {
                 return score;
@@ -288,7 +295,7 @@ namespace mist {
             int second_last_char_position = chars[last_index-1].second+1;
             int l = cigar->size() - second_last_char_position - 1;
             std::string num_string = cigar->substr(second_last_char_position, l);
-            int number = std::stoi(num_string);
+            int number = stoi(num_string);
             score -= number * gap;
             
         }
