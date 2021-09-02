@@ -2,7 +2,7 @@
 
 #include <string>
 
-enum class AlignmentType {global, local, semi_global};
+enum class AlignmentType {KGlobal, KLocal, KSemiGlobal};
 
 
 namespace mist {

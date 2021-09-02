@@ -18,13 +18,13 @@ namespace mist {
         
         switch (type) {
             
-            case AlignmentType::global:
+            case AlignmentType::KGlobal:
                 return AlignGlobal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
                 break;
-            case AlignmentType::local:
+            case AlignmentType::KLocal:
                 return AlignLocal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
                 break;
-            case AlignmentType::semi_global:
+            case AlignmentType::KSemiGlobal:
                 return AlignSemiGlobal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
                 break;
             default:
