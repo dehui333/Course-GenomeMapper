@@ -19,7 +19,6 @@ namespace mist {
         unsigned int kmer_len,
         unsigned int window_len);
     
-    std::string ReverseComplement(std::string s);
     
     
     
