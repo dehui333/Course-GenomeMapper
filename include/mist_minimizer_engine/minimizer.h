@@ -19,6 +19,7 @@ namespace mist {
         unsigned int kmer_len,
         unsigned int window_len);
     
+    unsigned int kmer_hash(const char* sequence, unsigned int kmer_len, unsigned int start, bool reverse_complement);
     
     
     
