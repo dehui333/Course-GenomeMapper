@@ -3,6 +3,10 @@
 #include <set>
 
 namespace mist {
+    void Filter(double prop) {
+        filter = prop;
+    }
+    
     //A - 00 C - 01 G - 10 T - 11
     unsigned int KmerHash(const char* sequence, unsigned int kmer_len, unsigned int start, bool is_original) {
         unsigned int hash = 0;
@@ -70,8 +74,8 @@ namespace mist {
             std::set<std::tuple<unsigned int, unsigned int, bool>> minimizers_in_window;
             unsigned int window_end = window_start + window_len - 1;
             for (unsigned int kmer_start = window_start; kmer_start <= window_end - kmer_len + 1; kmer_start++) {
-                unsigned int original_value = KmerHash(sequence, kmer_len, kmer_start, true);
-                unsigned int reverse_complement_value = KmerHash(sequence, kmer_len, kmer_start, false);
+                unsigned int original_value = mist::KmerHash(sequence, kmer_len, kmer_start, true);
+                unsigned int reverse_complement_value = mist::KmerHash(sequence, kmer_len, kmer_start, false);
                 //std::cout <<"original " << original_value << "\n";
                 //std::cout <<"complement " << reverse_complement_value << "\n";
                 if (original_value != reverse_complement_value) {
@@ -108,13 +112,10 @@ namespace mist {
                     std::vector<std::tuple<unsigned int, unsigned int, bool>> v;
                     v.push_back(std::make_tuple(i, std::get<1>(t), std::get<2>(t)));
                     mist::hash_map[hash_value] = v;
-                } else {
-                    mist::hash_map[hash_value].push_back(std::make_tuple(i, std::get<1>(t), std::get<2>(t)));
-                }
-                if (mist::hash_count.find(hash_value) == mist::hash_count.end()) {
                     mist::hash_count[hash_value] = 1;
                     total_count++;
                 } else {
+                    mist::hash_map[hash_value].push_back(std::make_tuple(i, std::get<1>(t), std::get<2>(t)));
                     mist::hash_count[hash_value]++;
                     total_count++;
                 }
@@ -122,6 +123,36 @@ namespace mist {
             }
             
         }       
+    }
+    
+    void Map(const char* query, unsigned int sequence_len, unsigned int kmer_len, unsigned int window_len) {
+        std::vector<std::tuple<unsigned int, bool, int, unsigned int>> v;
+        std::vector<std::tuple<unsigned int, unsigned int, bool>> minimizers_of_query = mist::Minimize(query, sequence_len, kmer_len, window_len);
+        for (auto t: minimizers_of_query) {
+            unsigned int hash = std::get<0>(t);
+            auto iter = mist::hash_count.find(hash); 
+            if (iter != mist::hash_count.end()) {
+                double count = static_cast<double>(iter->second);
+                double prop = count/total_count;
+                if (prop >= filter) {
+                    continue;
+                }
+                std::vector<std::tuple<unsigned int, unsigned int, bool >> hits = mist::hash_map[hash];
+                for (auto hit: hits) {
+                    unsigned int seq_num = std::get<0>(hit);
+                    bool diff_strand = (std::get<2>(hit) != std::get<2>(t));
+                    int displacement = diff_strand ? std::get<1>(t) + std::get<1>(hit) : std::get<1>(t) - std::get<1>(hit);
+                    unsigned int target_position = std::get<1>(hit);
+                    v.push_back(std::make_tuple(seq_num, diff_strand, displacement, target_position));
+                    
+                }
+                
+            }
+            
+        }
+        //TODO: sort and cluster
+        
+        
     }
 }
 /*
