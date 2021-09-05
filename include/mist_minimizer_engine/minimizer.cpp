@@ -9,6 +9,19 @@ namespace mist {
     void Filter(double prop) {
         filter = prop;
     }
+    /*
+    std::tuple<unsigned int, unsigned int, unsigned int, unsigned int> FindOverlap(
+        std::vector<std::tuple<unsigned int, bool, int, unsigned int>> roughly_colinear) {
+        
+        std::vector<int> values(roughly_colinear.size(), INT_MAX);
+        unsigned int indices[roughly_colinear.size()];
+        unsigned int parents[roughly_colinear.size()];
+        for (unsigned int i = 0; i < roughly_colinear.size(); i++) {
+            std::upper_bound(
+        }            
+            
+    }*/
+  
     
     //A - 00 C - 01 G - 10 T - 11
     unsigned int KmerHash(const char* sequence, unsigned int kmer_len, unsigned int start, bool is_original) {
@@ -171,15 +184,16 @@ namespace mist {
                     auto comp = [] (std::tuple<unsigned int, bool, int, unsigned int> const& t1, 
                                     std::tuple<unsigned int, bool, int, unsigned int> const& t2) -> bool 
                                    { 
-                                       unsigned int pos_on_query1;
-                                       unsigned int pos_on_query2;
-                                       if (std::get<1>(t1) == 0) {
-                                           pos_on_query1 = std::get<2>(t1) + std::get<3>(t1);
-                                           pos_on_query2 = std::get<2>(t2) + std::get<3>(t2);
+                                       int pos_on_query1;
+                                       int pos_on_query2;
+                                       if (std::get<1>(t1) == false) {
+                                           pos_on_query1 = std::get<2>(t1) + static_cast<int>(std::get<3>(t1));
+                                           pos_on_query2 = std::get<2>(t2) + static_cast<int>(std::get<3>(t2));
                                        } else {
-                                           pos_on_query1 = std::get<2>(t1) - std::get<3>(t1);
-                                           pos_on_query2 = std::get<2>(t2) - std::get<3>(t2);
+                                           pos_on_query1 = static_cast<int>(std::get<3>(t1)) - std::get<2>(t1);
+                                           pos_on_query2 = static_cast<int>(std::get<3>(t2)) - std::get<2>(t2);
                                        }
+                                       
                                        return pos_on_query1 < pos_on_query2;
                                    
                                    };
@@ -202,7 +216,7 @@ namespace mist {
 
 /*
 int main(int argc, char** argv) {
-    std::vector<std::string> v = {"AATCGTATCACATT", "ATCAGTACATA"};
-    mist::Minimize(v, 3, 5);
-    mist::Map("ATCGTACATT", 10, 3, 5);
+    std::vector<std::string> v = {"ATCGTACATT", "AATGTACGAT"};
+    mist::Minimize(v, 3, 3);
+    mist::Map("ATCGTACATT", 10, 3, 3);
 }*/
