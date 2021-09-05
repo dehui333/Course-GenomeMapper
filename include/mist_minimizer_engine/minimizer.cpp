@@ -155,7 +155,7 @@ namespace mist {
         }
         
         
-        //TODO: sort and cluster
+  
         std::sort(v.begin(), v.end());
         unsigned int i = 0;
         for (unsigned int j = 0; j < v.size(); j++) {
@@ -163,15 +163,36 @@ namespace mist {
                 || (std::get<2>(v[j+1]) - std::get<2>(v[j])) >= cluster_band_size ) {
                     //from i to j, one cluster
                     //find LIS in cluster
+                    std::vector<std::tuple<unsigned int, bool, int, unsigned int>> roughly_colinear;
                     for (int s = i; s <= j; s++) {
-                        std::cout << "target num " <<std::get<0>(v[s]) << "\n";
-                        std::cout << "diff strand? "<<std::get<1>(v[s]) << "\n";
-                        std::cout << "displacement " << std::get<2>(v[s]) << "\n";
-                        std::cout << "target pos " << std::get<3>(v[s]) << "\n\n";
+                        roughly_colinear.push_back(v[s]);
+                            
                     }
-                    std::cout << "cluster end\n";
+                    auto comp = [] (std::tuple<unsigned int, bool, int, unsigned int> const& t1, 
+                                    std::tuple<unsigned int, bool, int, unsigned int> const& t2) -> bool 
+                                   { 
+                                       unsigned int pos_on_query1;
+                                       unsigned int pos_on_query2;
+                                       if (std::get<1>(t1) == 0) {
+                                           pos_on_query1 = std::get<2>(t1) + std::get<3>(t1);
+                                           pos_on_query2 = std::get<2>(t2) + std::get<3>(t2);
+                                       } else {
+                                           pos_on_query1 = std::get<2>(t1) - std::get<3>(t1);
+                                           pos_on_query2 = std::get<2>(t2) - std::get<3>(t2);
+                                       }
+                                       return pos_on_query1 < pos_on_query2;
+                                   
+                                   };
+                    std::sort(roughly_colinear.begin(), roughly_colinear.end(), comp);
+                    /*for (auto t: roughly_colinear) {
+                        std::cout <<"target num " << std::get<0>(t) << "\n";
+                        std::cout <<"diff strand? " << std::get<1>(t) << "\n";
+                        std::cout <<"displacement " << std::get<2>(t) << "\n";
+                        std::cout <<"target_position " << std::get<3>(t) << "\n\n";
+                    }*/
                     i = j + 1;
-
+                    //std::cout << "--------------------\n";
+                    
                 }                    
         }
         
@@ -179,8 +200,9 @@ namespace mist {
     }
 }
 
+/*
 int main(int argc, char** argv) {
-    std::vector<std::string> v = {"ATCGAAATC", "CTCATCAG"};
-    mist::Minimize(v, 3, 3);
-    mist::Map("ATC", 3, 3, 3);
-}
+    std::vector<std::string> v = {"AATCGTATCACATT", "ATCAGTACATA"};
+    mist::Minimize(v, 3, 5);
+    mist::Map("ATCGTACATT", 10, 3, 5);
+}*/
