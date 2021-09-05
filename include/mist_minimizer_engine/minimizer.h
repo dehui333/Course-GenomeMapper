@@ -25,7 +25,8 @@ namespace mist {
     std::unordered_map<unsigned int, std::vector<std::tuple<unsigned int, unsigned int, bool >>> hash_map;
     std::unordered_map<unsigned int, unsigned int> hash_count;
     unsigned int total_count = 0;
-    double filter = 0.001;
+    double filter = 1;//0.001;
+    unsigned int cluster_band_size = 10;
     
     
     

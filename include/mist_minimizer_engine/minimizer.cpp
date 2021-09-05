@@ -1,6 +1,9 @@
 #include "minimizer.h"
 
+#include <algorithm>
 #include <set>
+
+#include <iostream>
 
 namespace mist {
     void Filter(double prop) {
@@ -142,7 +145,7 @@ namespace mist {
                     unsigned int seq_num = std::get<0>(hit);
                     bool diff_strand = (std::get<2>(hit) != std::get<2>(t));
                     int displacement = diff_strand ? std::get<1>(t) + std::get<1>(hit) : std::get<1>(t) - std::get<1>(hit);
-                    unsigned int target_position = std::get<1>(hit);
+                    unsigned int target_position = std::get<1>(hit);                    
                     v.push_back(std::make_tuple(seq_num, diff_strand, displacement, target_position));
                     
                 }
@@ -150,17 +153,34 @@ namespace mist {
             }
             
         }
+        
+        
         //TODO: sort and cluster
+        std::sort(v.begin(), v.end());
+        unsigned int i = 0;
+        for (unsigned int j = 0; j < v.size(); j++) {
+            if (j == (v.size() - 1) || std::get<0>(v[j+1]) != std::get<0>(v[j]) || std::get<1>(v[j+1]) != std::get<1>(v[j]) 
+                || (std::get<2>(v[j+1]) - std::get<2>(v[j])) >= cluster_band_size ) {
+                    //from i to j, one cluster
+                    //find LIS in cluster
+                    for (int s = i; s <= j; s++) {
+                        std::cout << "target num " <<std::get<0>(v[s]) << "\n";
+                        std::cout << "diff strand? "<<std::get<1>(v[s]) << "\n";
+                        std::cout << "displacement " << std::get<2>(v[s]) << "\n";
+                        std::cout << "target pos " << std::get<3>(v[s]) << "\n\n";
+                    }
+                    std::cout << "cluster end\n";
+                    i = j + 1;
+
+                }                    
+        }
         
         
     }
 }
-/*
+
 int main(int argc, char** argv) {
-    std::vector<std::tuple<unsigned int, unsigned int, bool>> m = mist::Minimize("ATCGATCGAT", 10, 3, 5);
-    for (auto p: m) {
-        std::cout << std::get<0>(p) << "\n";
-        std::cout << std::get<1>(p) << "\n";
-        std::cout << std::get<2>(p) << "\n\n";
-    }
-}*/
+    std::vector<std::string> v = {"ATCGAAATC", "CTCATCAG"};
+    mist::Minimize(v, 3, 3);
+    mist::Map("ATC", 3, 3, 3);
+}
