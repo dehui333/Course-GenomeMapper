@@ -10,7 +10,7 @@ namespace mist {
         filter = prop;
     }
     
-    std::tuple<bool, unsigned int, unsigned int, unsigned int, unsigned int> FindOverlap(
+    std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> FindOverlap(
         std::vector<std::tuple<unsigned int, bool, int, unsigned int>> roughly_colinear, unsigned int& increasing_len) {
         int highest_value_index = -1;
         std::vector<int> values(roughly_colinear.size(), 2147483647);
@@ -43,7 +43,8 @@ namespace mist {
         unsigned int query_end = std::get<2>(end_tuple) + mul * std::get<3>(end_tuple);
         unsigned int target_start = std::get<3>(start_tuple);
         unsigned int target_end = std::get<3>(end_tuple);
-        return std::make_tuple(diff_strand, query_start, query_end, target_start, target_end);
+        unsigned int target_index = std::get<0>(end_tuple);
+        return std::make_tuple(target_index, diff_strand, query_start, query_end, target_start, target_end);
             
             
     }
@@ -167,11 +168,11 @@ namespace mist {
         }       
     }
     
-     std::tuple<bool, unsigned int, unsigned int, unsigned int, unsigned int> Map(const char* query, unsigned int sequence_len, unsigned int kmer_len, unsigned int window_len) {
+     std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> Map(const char* query, unsigned int sequence_len, unsigned int kmer_len, unsigned int window_len) {
         std::vector<std::tuple<unsigned int, bool, int, unsigned int>> v;
         std::vector<std::tuple<unsigned int, unsigned int, bool>> minimizers_of_query = mist::Minimize(query, sequence_len, kmer_len, window_len);
         unsigned int best_increasing_len = 0;
-        std::tuple<bool, unsigned int, unsigned int, unsigned int, unsigned int> best;
+        std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> best;
         for (auto t: minimizers_of_query) {
             unsigned int hash = std::get<0>(t);
             auto iter = mist::hash_count.find(hash); 
@@ -245,6 +246,12 @@ namespace mist {
                     
                 }                    
         }
+        std::cout <<"t index " << std::get<0>(best) << "\n";
+        std::cout <<"diff strand? " << std::get<1>(best) << "\n";
+        std::cout <<"q start " << std::get<2>(best) << "\n";
+        std::cout <<"q end " << std::get<3>(best) << "\n";
+        std::cout <<"t start " << std::get<4>(best) << "\n";
+        std::cout <<"t end " << std::get<5>(best) << "\n\n";
         return best;
 
     }
