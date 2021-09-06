@@ -9,18 +9,44 @@ namespace mist {
     void Filter(double prop) {
         filter = prop;
     }
-    /*
-    std::tuple<unsigned int, unsigned int, unsigned int, unsigned int> FindOverlap(
-        std::vector<std::tuple<unsigned int, bool, int, unsigned int>> roughly_colinear) {
+    
+    std::tuple<bool, unsigned int, unsigned int, unsigned int, unsigned int> FindOverlap(
+        std::vector<std::tuple<unsigned int, bool, int, unsigned int>> roughly_colinear, unsigned int& increasing_len) {
+        int highest_value_index = -1;
+        std::vector<int> values(roughly_colinear.size(), 2147483647);
+        unsigned int indices[roughly_colinear.size()]; //which input do the elements in the values vector correspond to
+        unsigned int parents[roughly_colinear.size()]; //which input is the parent of each input 
+        for (int i = 0; i < roughly_colinear.size(); i++) {
+            unsigned int current_input = std::get<3>(roughly_colinear[i]);
+            int j = std::upper_bound(values.begin(), values.end(), current_input) - values.begin();
+            if (j == 0 || values[j-1] < current_input) {
+                values[j] = current_input;
+                if (j > highest_value_index) {
+                    highest_value_index = j;
+                }
+                indices[j] = i;
+                parents[i] = j == 0 ? -1 : indices[j-1];
+                
+            } 
+        }
+        increasing_len = highest_value_index + 1;
+        bool diff_strand = std::get<1>(roughly_colinear[0]);
+        auto end_tuple = roughly_colinear[indices[highest_value_index]];
+        int i = indices[highest_value_index];
+        while (parents[i] != -1) {
+            i = parents[i];
+        }
+        auto start_tuple = roughly_colinear[indices[i]];
+        int mul = diff_strand ? -1 : 1;
+        unsigned int query_start = std::get<2>(start_tuple) + mul * std::get<3>(start_tuple);
+        unsigned int query_end = std::get<2>(end_tuple) + mul * std::get<3>(end_tuple);
+        unsigned int target_start = std::get<3>(start_tuple);
+        unsigned int target_end = std::get<3>(end_tuple);
         
-        std::vector<int> values(roughly_colinear.size(), INT_MAX);
-        unsigned int indices[roughly_colinear.size()];
-        unsigned int parents[roughly_colinear.size()];
-        for (unsigned int i = 0; i < roughly_colinear.size(); i++) {
-            std::upper_bound(
-        }            
+        return std::make_tuple(diff_strand, query_start, query_end, target_start, target_end);
             
-    }*/
+            
+    }
   
     
     //A - 00 C - 01 G - 10 T - 11
