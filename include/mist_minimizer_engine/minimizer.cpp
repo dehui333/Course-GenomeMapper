@@ -29,6 +29,7 @@ namespace mist {
                 
             } 
         }
+
         increasing_len = highest_value_index + 1;
         bool diff_strand = std::get<1>(roughly_colinear[0]);
         auto end_tuple = roughly_colinear[indices[highest_value_index]];
@@ -170,6 +171,8 @@ namespace mist {
     void Map(const char* query, unsigned int sequence_len, unsigned int kmer_len, unsigned int window_len) {
         std::vector<std::tuple<unsigned int, bool, int, unsigned int>> v;
         std::vector<std::tuple<unsigned int, unsigned int, bool>> minimizers_of_query = mist::Minimize(query, sequence_len, kmer_len, window_len);
+        unsigned int best_increasing_len = 0;
+        std::tuple<bool, unsigned int, unsigned int, unsigned int, unsigned int> best;
         for (auto t: minimizers_of_query) {
             unsigned int hash = std::get<0>(t);
             auto iter = mist::hash_count.find(hash); 
@@ -224,25 +227,37 @@ namespace mist {
                                    
                                    };
                     std::sort(roughly_colinear.begin(), roughly_colinear.end(), comp);
-                    /*for (auto t: roughly_colinear) {
+                    for (auto t: roughly_colinear) {
                         std::cout <<"target num " << std::get<0>(t) << "\n";
                         std::cout <<"diff strand? " << std::get<1>(t) << "\n";
                         std::cout <<"displacement " << std::get<2>(t) << "\n";
                         std::cout <<"target_position " << std::get<3>(t) << "\n\n";
-                    }*/
+                    }
                     i = j + 1;
-                    //std::cout << "--------------------\n";
+                    unsigned int increasing_len = 0;
+                    auto overlap = FindOverlap(roughly_colinear, increasing_len);
+                    std::cout << "INCREASE " << increasing_len << "\n";
+                    std::cout << "BEST INCREASE " << best_increasing_len << "\n";
+                    if (increasing_len > best_increasing_len) {
+                        best = overlap;
+                        best_increasing_len = increasing_len;
+                    }
+                    std::cout << "--------------------\n";
                     
                 }                    
         }
         
-        
+        std::cout <<"diff strand? " << std::get<0>(best) << "\n";
+        std::cout <<"query begin " << std::get<1>(best) << "\n";
+        std::cout <<"query end " << std::get<2>(best) << "\n";
+        std::cout <<"target begin " << std::get<3>(best) << "\n";
+        std::cout <<"target end " << std::get<4>(best) << "\n\n";
     }
 }
 
-/*
+
 int main(int argc, char** argv) {
     std::vector<std::string> v = {"ATCGTACATT", "AATGTACGAT"};
     mist::Minimize(v, 3, 3);
     mist::Map("ATCGTACATT", 10, 3, 3);
-}*/
+}
