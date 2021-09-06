@@ -19,7 +19,7 @@ namespace mist {
         unsigned int window_len);
     
     unsigned int KmerHash(const char* sequence, unsigned int kmer_len, unsigned int start, bool is_original);
-    void Map(const char* sequence, unsigned int sequence_len, unsigned int kmer_len);
+    std::tuple<bool, unsigned int, unsigned int, unsigned int, unsigned int> Map(const char* sequence, unsigned int sequence_len, unsigned int kmer_len);
     void Filter(double prop);
     std::tuple<bool, unsigned int, unsigned int, unsigned int, unsigned int> FindOverlap(std::vector<std::tuple<unsigned int, bool, int, unsigned int>> roughly_colinear, unsigned int& increasing_len);
     

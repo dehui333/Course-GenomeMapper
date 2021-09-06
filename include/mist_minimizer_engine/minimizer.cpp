@@ -14,8 +14,8 @@ namespace mist {
         std::vector<std::tuple<unsigned int, bool, int, unsigned int>> roughly_colinear, unsigned int& increasing_len) {
         int highest_value_index = -1;
         std::vector<int> values(roughly_colinear.size(), 2147483647);
-        unsigned int indices[roughly_colinear.size()]; //which input do the elements in the values vector correspond to
-        unsigned int parents[roughly_colinear.size()]; //which input is the parent of each input 
+        unsigned int indices[roughly_colinear.size()] ={0}; //which input do the elements in the values vector correspond to
+        unsigned int parents[roughly_colinear.size()] = {0}; //which input is the parent of each input 
         for (int i = 0; i < roughly_colinear.size(); i++) {
             unsigned int current_input = std::get<3>(roughly_colinear[i]);
             int j = std::upper_bound(values.begin(), values.end(), current_input) - values.begin();
@@ -37,13 +37,12 @@ namespace mist {
         while (parents[i] != -1) {
             i = parents[i];
         }
-        auto start_tuple = roughly_colinear[indices[i]];
+        auto start_tuple = roughly_colinear[i];
         int mul = diff_strand ? -1 : 1;
         unsigned int query_start = std::get<2>(start_tuple) + mul * std::get<3>(start_tuple);
         unsigned int query_end = std::get<2>(end_tuple) + mul * std::get<3>(end_tuple);
         unsigned int target_start = std::get<3>(start_tuple);
         unsigned int target_end = std::get<3>(end_tuple);
-        
         return std::make_tuple(diff_strand, query_start, query_end, target_start, target_end);
             
             
@@ -168,7 +167,7 @@ namespace mist {
         }       
     }
     
-    void Map(const char* query, unsigned int sequence_len, unsigned int kmer_len, unsigned int window_len) {
+     std::tuple<bool, unsigned int, unsigned int, unsigned int, unsigned int> Map(const char* query, unsigned int sequence_len, unsigned int kmer_len, unsigned int window_len) {
         std::vector<std::tuple<unsigned int, bool, int, unsigned int>> v;
         std::vector<std::tuple<unsigned int, unsigned int, bool>> minimizers_of_query = mist::Minimize(query, sequence_len, kmer_len, window_len);
         unsigned int best_increasing_len = 0;
@@ -246,18 +245,14 @@ namespace mist {
                     
                 }                    
         }
-        
-        std::cout <<"diff strand? " << std::get<0>(best) << "\n";
-        std::cout <<"query begin " << std::get<1>(best) << "\n";
-        std::cout <<"query end " << std::get<2>(best) << "\n";
-        std::cout <<"target begin " << std::get<3>(best) << "\n";
-        std::cout <<"target end " << std::get<4>(best) << "\n\n";
+        return best;
+
     }
 }
 
 
 int main(int argc, char** argv) {
-    std::vector<std::string> v = {"ATCGTACATT", "AATGTACGAT"};
+    std::vector<std::string> v = {"ATCGTACATCATTGTA", "AATGTACGAT"};
     mist::Minimize(v, 3, 3);
     mist::Map("ATCGTACATT", 10, 3, 3);
 }
