@@ -14,8 +14,8 @@ namespace mist {
         int highest_value_index = -1; //points to the position of the highest value reached
         int highest_input_index = -1; //points to the input object that has the highest value reached
         std::vector<int> values(roughly_colinear.size(), 2147483647); //Longest increasing subsequence of target position values
-        unsigned int indices[roughly_colinear.size()] ={0}; //which input do the elements in the values vector correspond to
-        unsigned int parents[roughly_colinear.size()] = {0}; //which input is the parent of each input 
+        unsigned int indices[roughly_colinear.size()]; //which input do the elements in the values vector correspond to
+        unsigned int parents[roughly_colinear.size()]; //which input is the parent of each input 
         for (int i = 0; i < roughly_colinear.size(); i++) {
             unsigned int current_input = std::get<3>(roughly_colinear[i]); //current target position
             int j = std::upper_bound(values.begin(), values.end(), current_input) - values.begin();
