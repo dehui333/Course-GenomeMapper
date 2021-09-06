@@ -12,6 +12,15 @@
 
 bool print_version = false;
 bool print_help = false;
+bool calculate_alignment = false;
+AlignmentType type = AlignmentType::KGlobal;
+int match_cost = 3;
+int mismatch_cost = -5;
+int gap_cost = -4;
+int kmer_size = 15;
+int window_size = 10;
+int cluster_band_size = 10;
+double filter = 0.001;
 
 std::string ErrorString(std::string opt, int error_code) {
     switch (error_code){

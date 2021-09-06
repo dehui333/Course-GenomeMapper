@@ -19,16 +19,12 @@ namespace mist {
         unsigned int window_len);
     
     unsigned int KmerHash(const char* sequence, unsigned int kmer_len, unsigned int start, bool is_original);
-    std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> Map(const char* sequence, unsigned int sequence_len, unsigned int kmer_len);
-    void Filter(double prop);
+    std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> Map(const char* sequence, unsigned int sequence_len, unsigned int kmer_len,  unsigned int cluster_band_size, double filter);
     std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> FindOverlap(std::vector<std::tuple<unsigned int, bool, int, unsigned int>> roughly_colinear, unsigned int& increasing_len);
     
     std::unordered_map<unsigned int, std::vector<std::tuple<unsigned int, unsigned int, bool >>> hash_map;
     std::unordered_map<unsigned int, unsigned int> hash_count;
-    unsigned int total_count = 0;
-    double filter = 1;//0.001;
-    unsigned int cluster_band_size = 10;
-    
+    unsigned int total_count = 0;    
     
     
     

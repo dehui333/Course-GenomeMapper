@@ -1,46 +1,82 @@
 #include "minimizer.h"
 
 #include <algorithm>
+#include <cmath>
 #include <set>
 
 #include <iostream>
 
 namespace mist {
-    void Filter(double prop) {
-        filter = prop;
-    }
-    
     std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> FindOverlap(
         std::vector<std::tuple<unsigned int, bool, int, unsigned int>> roughly_colinear, unsigned int& increasing_len) {
-        int highest_value_index = -1;
-        std::vector<int> values(roughly_colinear.size(), 2147483647);
+        bool diff_strand = std::get<1>(roughly_colinear[0]);    
+        int mul = diff_strand ? -1 : 1;
+        int highest_value_index = -1; //points to the position of the highest value reached
+        int highest_input_index = -1; //points to the input object that has the highest value reached
+        std::vector<int> values(roughly_colinear.size(), 2147483647); //Longest increasing subsequence of target position values
         unsigned int indices[roughly_colinear.size()] ={0}; //which input do the elements in the values vector correspond to
         unsigned int parents[roughly_colinear.size()] = {0}; //which input is the parent of each input 
         for (int i = 0; i < roughly_colinear.size(); i++) {
-            unsigned int current_input = std::get<3>(roughly_colinear[i]);
+            unsigned int current_input = std::get<3>(roughly_colinear[i]); //current target position
             int j = std::upper_bound(values.begin(), values.end(), current_input) - values.begin();
-            if (j == 0 || values[j-1] < current_input) {
+            
+            if (j != 0) {
+                //avoid forming chain with constant query positions
+                auto previous = roughly_colinear[indices[j-1]];
+                unsigned int previous_query_pos = std::get<2>(previous) + mul * std::get<3>(previous);
+                unsigned int current_query_pos = std::get<2>(roughly_colinear[i]) + mul * std::get<3>(roughly_colinear[i]);    
+                if (previous_query_pos == current_query_pos) {
+                    continue;
+                }
+                int query_pos_displacement= current_query_pos - previous_query_pos;
+                if (values[j-1] < current_input) {
+                    values[j] = current_input;
+                    indices[j] = i;
+                    //std::cout << "replaced values[" <<j <<"] index with " << i  << "\n";
+                    parents[i] = j == 0 ? -1 : indices[j-1];
+                    if (j > highest_value_index) {
+                        highest_value_index = j;
+                        highest_input_index = indices[j];
+                    }
+                } else if (!diff_strand && values[j-1] == current_input && query_pos_displacement > 0) {
+                    values[j-1] = current_input;
+                    indices[j-1] = i;
+                    //std::cout << "replaced values[" <<j-1 <<"] index with " << i  << "\n";
+                    parents[i] = j-1 == 0 ? -1 : indices[j-2];
+                } else if (diff_strand && values[j-1] == current_input && query_pos_displacement < 0) {
+                    values[j-1] = current_input;
+                    indices[j-1] = i;
+                    //std::cout << "replaced values[" <<j-1 <<"] index with " << i  << "\n";
+                    parents[i] = j-1 == 0 ? -1 : indices[j-2];
+                }
+                
+            } else {
                 values[j] = current_input;
+                indices[j] = i;
+                //std::cout << "replaced values[" <<j <<"] index with " << i  << "\n";
+                parents[i] = j == 0 ? -1 : indices[j-1];
                 if (j > highest_value_index) {
                     highest_value_index = j;
+                    highest_input_index = indices[j];
                 }
-                indices[j] = i;
-                parents[i] = j == 0 ? -1 : indices[j-1];
                 
-            } 
+            }
         }
 
         increasing_len = highest_value_index + 1;
-        bool diff_strand = std::get<1>(roughly_colinear[0]);
-        auto end_tuple = roughly_colinear[indices[highest_value_index]];
-        int i = indices[highest_value_index];
+        
+        auto end_tuple = roughly_colinear[highest_input_index];
+        int i = highest_input_index;
         while (parents[i] != -1) {
             i = parents[i];
         }
         auto start_tuple = roughly_colinear[i];
-        int mul = diff_strand ? -1 : 1;
-        unsigned int query_start = std::get<2>(start_tuple) + mul * std::get<3>(start_tuple);
-        unsigned int query_end = std::get<2>(end_tuple) + mul * std::get<3>(end_tuple);
+        //std::cout << "S index " << i << "\n";
+        //std::cout << "E index " << highest_input_index<< "\n";
+        auto query_start_tuple = diff_strand ? end_tuple : start_tuple;
+        auto query_end_tuple = diff_strand ? start_tuple : end_tuple;
+        unsigned int query_start = std::get<2>(query_start_tuple) + mul * std::get<3>(query_start_tuple);
+        unsigned int query_end = std::get<2>(query_end_tuple) + mul * std::get<3>(query_end_tuple);
         unsigned int target_start = std::get<3>(start_tuple);
         unsigned int target_end = std::get<3>(end_tuple);
         unsigned int target_index = std::get<0>(end_tuple);
@@ -168,18 +204,26 @@ namespace mist {
         }       
     }
     
-     std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> Map(const char* query, unsigned int sequence_len, unsigned int kmer_len, unsigned int window_len) {
+     std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> Map(const char* query, unsigned int sequence_len, unsigned int kmer_len, unsigned int window_len, int cluster_band_size, double filter) {
         std::vector<std::tuple<unsigned int, bool, int, unsigned int>> v;
         std::vector<std::tuple<unsigned int, unsigned int, bool>> minimizers_of_query = mist::Minimize(query, sequence_len, kmer_len, window_len);
         unsigned int best_increasing_len = 0;
+        unsigned int best_len_diff = UINT32_MAX;
         std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> best;
+        //for (auto p: mist::hash_count) {
+        //    std::cout << p.first << " count " << p.second << "\n"; 
+        //}
+        //std::cout << total_count << "\n";
         for (auto t: minimizers_of_query) {
             unsigned int hash = std::get<0>(t);
             auto iter = mist::hash_count.find(hash); 
             if (iter != mist::hash_count.end()) {
                 double count = static_cast<double>(iter->second);
                 double prop = count/total_count;
+                //std::cout << "HASH " << hash << "\n";
+                //std::cout << "PROP " << prop << "\n";
                 if (prop >= filter) {
+                    //std::cout << hash << " is filtered!\n";
                     continue;
                 }
                 std::vector<std::tuple<unsigned int, unsigned int, bool >> hits = mist::hash_map[hash];
@@ -227,39 +271,51 @@ namespace mist {
                                    
                                    };
                     std::sort(roughly_colinear.begin(), roughly_colinear.end(), comp);
-                    for (auto t: roughly_colinear) {
+                    /*for (int i = 0;i< roughly_colinear.size(); i++) {
+                        std::cout << i << "\n";
+                        auto t = roughly_colinear[i];
                         std::cout <<"target num " << std::get<0>(t) << "\n";
                         std::cout <<"diff strand? " << std::get<1>(t) << "\n";
                         std::cout <<"displacement " << std::get<2>(t) << "\n";
                         std::cout <<"target_position " << std::get<3>(t) << "\n\n";
-                    }
+                    }*/
                     i = j + 1;
                     unsigned int increasing_len = 0;
                     auto overlap = FindOverlap(roughly_colinear, increasing_len);
-                    std::cout << "INCREASE " << increasing_len << "\n";
-                    std::cout << "BEST INCREASE " << best_increasing_len << "\n";
+                    //std::cout << "INCREASE " << increasing_len << "\n";
+                    //std::cout << "BEST INCREASE " << best_increasing_len << "\n";
+                    int len_q = std::get<3>(overlap) - std::get<2>(overlap);
+                    int len_t = std::get<5>(overlap) - std::get<4>(overlap);
+                    unsigned int len_diff = std::abs(len_q - len_t);
                     if (increasing_len > best_increasing_len) {
                         best = overlap;
                         best_increasing_len = increasing_len;
-                    }
-                    std::cout << "--------------------\n";
+                        best_len_diff = len_diff;
+                    } else if (increasing_len == best_increasing_len && len_diff < best_len_diff) {
+                        best = overlap;
+                        best_increasing_len = increasing_len;
+                        best_len_diff = len_diff;
+                    }                        
+                   // std::cout << "--------------------\n";
                     
                 }                    
         }
+        /*
         std::cout <<"t index " << std::get<0>(best) << "\n";
         std::cout <<"diff strand? " << std::get<1>(best) << "\n";
         std::cout <<"q start " << std::get<2>(best) << "\n";
         std::cout <<"q end " << std::get<3>(best) << "\n";
         std::cout <<"t start " << std::get<4>(best) << "\n";
         std::cout <<"t end " << std::get<5>(best) << "\n\n";
+        */
         return best;
 
     }
 }
 
-
+/*
 int main(int argc, char** argv) {
-    std::vector<std::string> v = {"ATCGTACATCATTGTA", "AATGTACGAT"};
+    std::vector<std::string> v = {"ATCATC"};       
     mist::Minimize(v, 3, 3);
-    mist::Map("ATCGTACATT", 10, 3, 3);
-}
+    mist::Map("ATCTTTTTATCATC", 14, 3, 3, 10, 1);
+}*/
