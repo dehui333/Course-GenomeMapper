@@ -207,6 +207,10 @@ void ProcessNonOpts(std::vector<std::string>& non_opts) {
     
 }
 
+void Map(FastaParser* ref, FastaParser* reads_fasta, FastqParser* reads_fastq) {
+    
+}
+
 int main(int argc, char** argv) {
     
     std::unordered_map<std::string, bool> m = {{"h", false}, {"c", false}, {"a", true}, {"m", true}, {"n", true}, {"g", true},

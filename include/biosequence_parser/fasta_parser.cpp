@@ -12,16 +12,20 @@ void FastaParser::Parse(std::string path) {
         if (read_buffer[0] == '>') {
          
             if (store_buffer_sequence != "") {
-                std::pair<std::string, std::string> p (store_buffer_name, store_buffer_sequence);
-                sequences_.push_back(p);
-                store_buffer_sequence = "";
-                average_L_ += (p.second.size() - average_L_) / sequences_.size();
-                if (p.second.size() > max_L_) {
-                    max_L_ = p.second.size();
+                
+                sequences_.push_back(store_buffer_sequence);
+                descriptions_.push_back(store_buffer_name);
+                average_L_ += (store_buffer_sequence.size() - average_L_) / sequences_.size();
+                if (store_buffer_sequence.size() > max_L_) {
+                    max_L_ = store_buffer_sequence.size();
                 } 
-                if (p.second.size() < min_L_) {
-                    min_L_ = p.second.size();    
+                if (store_buffer_sequence.size() < min_L_) {
+                    min_L_ = store_buffer_sequence.size();    
                 }
+                
+                store_buffer_sequence = "";
+                
+                
             }
             store_buffer_name = read_buffer.substr(1);
                             
@@ -31,14 +35,14 @@ void FastaParser::Parse(std::string path) {
         
     }
     if (store_buffer_sequence != "") {
-                std::pair<std::string, std::string> p (store_buffer_name, store_buffer_sequence);
-                sequences_.push_back(p);
-                average_L_ += (p.second.size() - average_L_) / sequences_.size();
-                if (p.second.size() > max_L_) {
-                    max_L_ = p.second.size();
+                descriptions_.push_back(store_buffer_name);          
+                sequences_.push_back(store_buffer_sequence);
+                average_L_ += (store_buffer_sequence.size() - average_L_) / sequences_.size();
+                if (store_buffer_sequence.size() > max_L_) {
+                    max_L_ = store_buffer_sequence.size();
                 } 
-                if (p.second.size() < min_L_) {
-                    min_L_ = p.second.size();    
+                if (store_buffer_sequence.size() < min_L_) {
+                    min_L_ = store_buffer_sequence.size();    
                 }
     }
     
@@ -47,11 +51,11 @@ void FastaParser::Parse(std::string path) {
     
 
 std::string FastaParser::GetSequence(size_t i) {
-    return sequences_[i].second;
+    return sequences_[i];
 }
 
 std::string FastaParser::GetDescription(size_t i) {
-    return sequences_[i].first;
+    return descriptions_[i];
 }
 
 

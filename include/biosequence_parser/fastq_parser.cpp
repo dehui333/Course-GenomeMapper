@@ -26,7 +26,9 @@ void FastqParser::Parse(std::string path) {
                 break;
             case 3:
                 store_buffer_quality = read_buffer;
-                sequences_.push_back(std::make_tuple(store_buffer_name, store_buffer_sequence, store_buffer_quality));
+                sequences_.push_back(store_buffer_sequence);
+                descriptions_.push_back(store_buffer_name);
+                qualities_.push_back(store_buffer_quality);
                 average_L_ += (store_buffer_sequence.size() - average_L_) / sequences_.size();
                 if (store_buffer_sequence.size() > max_L_) {
                     max_L_ = store_buffer_sequence.size();
@@ -51,15 +53,15 @@ void FastqParser::Parse(std::string path) {
     
 
 std::string FastqParser::GetSequence(size_t i) {
-    return std::get<1>(sequences_[i]);
+    return sequences_[i];
 }
 
 std::string FastqParser::GetDescription(size_t i) {
-    return std::get<0>(sequences_[i]);
+    return descriptions_[i];
 }
 
 std::string FastqParser::GetQuality(size_t i) {
-    return std::get<2>(sequences_[i]);
+    return qualities_[i];
 }
 
 size_t FastqParser::NumSequences() {

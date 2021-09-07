@@ -8,7 +8,9 @@
 class FastqParser : public BiosequenceParser {
     
     private:
-        std::vector<std::tuple<std::string, std::string, std::string>> sequences_;
+        std::vector<std::string> sequences_;
+        std::vector<std::string> descriptions_;
+        std::vector<std::string> qualities_;
         float average_L_ = 0;
         size_t max_L_ = 0;
         size_t min_L_ = SIZE_MAX;    
