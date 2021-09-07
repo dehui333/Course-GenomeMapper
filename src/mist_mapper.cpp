@@ -36,12 +36,79 @@ std::string ErrorString(std::string opt, int error_code) {
     }
 }
 
+bool is_int_string(std::string s) {
+    bool arg_is_int_string = true;
+    for (int i = 0; i < s.size();i++) {
+        if (!isdigit(s[i])) {
+            arg_is_int_string = false;
+            break;
+        }
+    }
+    return arg_is_int_string;
+}
+
+bool is_float_string(std::string s) {
+    if (!isdigit(s[0])) {
+        return false;
+    }
+    bool arg_is_float_string = true;
+    for (int i = 1; i < s.size();i++) {
+        if (!(isdigit(s[i]) || s[i] == '.')) {
+            arg_is_float_string = false;
+            break;
+        }
+    }
+    return arg_is_float_string;
+    
+}
+
 void ProcessOpts(std::vector<std::pair<std::string, std::string>>& opts, std::vector<std::pair<std::string, int>>& bad_opts) {
     for (auto p: opts) {
-        if (p.first == "h") {
+        std::string opt = p.first;
+        std::string arg = p.second;
+        if (opt == "h") {
             print_help = true;
-        } else if (p.first == "version") {
+        } else if (opt == "version") {
             print_version = true;
+        } else if (opt == "c") {
+            calculate_alignment = true;
+        } else if (opt == "m") {
+            if (is_int_string(arg)) {
+                match_cost = std::stoi(arg);
+            } else {
+                std::cerr << "-m requires an integer argument!\n";
+            }
+            
+        } else if (opt == "n") {
+            if (is_int_string(arg)) {
+                mismatch_cost = std::stoi(arg);
+            } else {
+                std::cerr << "-n requires an integer argument!\n";
+            }
+        } else if (opt == "g") {
+            if (is_int_string(arg)) {
+                gap_cost = std::stoi(arg);
+            } else {
+                std::cerr << "-g requires an integer argument!\n";
+            }
+        } else if (opt == "k") {
+            if (is_int_string(arg)) {
+                kmer_size = std::stoi(arg);
+            } else {
+                std::cerr << "-k requires an integer argument <= 16!\n";
+            }
+        } else if (opt == "w") {
+            if (is_int_string(arg)) {
+                window_size = std::stoi(arg);
+            } else {
+                std::cerr << "-w requires an integer argument!\n";
+            }
+        } else if (opt == "f") {
+            if (is_float_string(arg)) {
+                filter = std::stod(arg);
+            } else {
+                std::cerr << "-f requires a floating point argument!\n";
+            }
         }
     }
     for (auto p: bad_opts) {
@@ -142,7 +209,8 @@ void ProcessNonOpts(std::vector<std::string>& non_opts) {
 
 int main(int argc, char** argv) {
     
-    std::unordered_map<std::string, bool> m = {{"h", false}, {"version", false}};
+    std::unordered_map<std::string, bool> m = {{"h", false}, {"c", false}, {"a", true}, {"m", true}, {"n", true}, {"g", true},
+        {"k", true}, {"w", true}, {"f", true}, {"version", false}};
     std::vector<std::string> non_opts;
     std::vector<std::pair<std::string, int>> bad_opts;
     OptParser p(m);
