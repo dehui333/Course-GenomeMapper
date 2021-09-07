@@ -19,6 +19,8 @@ class FastaParser : public BiosequenceParser {
     public:
         void Parse(std::string path);  
         std::string GetSequence(size_t index);
+        std::vector<std::string>& GetSequences();
+        std::vector<std::string>& GetDescriptions();
         std::string GetDescription(size_t index);
         size_t NumSequences();
         size_t MaxL();

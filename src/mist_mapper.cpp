@@ -8,6 +8,7 @@
 #include "config.h"
 #include "fasta_parser.h"
 #include "fastq_parser.h"
+#include "minimizer.h"
 #include "opt_parser.h"
 
 bool print_version = false;
@@ -109,6 +110,22 @@ void ProcessOpts(std::vector<std::pair<std::string, std::string>>& opts, std::ve
             } else {
                 std::cerr << "-f requires a floating point argument!\n";
             }
+        } else if (opt == "a") {
+            if (arg == "global") {
+                type = AlignmentType::KGlobal;
+            } else if (arg == "local") {
+                type = AlignmentType::KLocal;
+            } else if (arg == "semi") {
+                type = AlignmentType::KSemiGlobal;
+            } else {
+                std::cerr << "-a requires an argument out of 1. global 2. local 3. semi\n";
+            }
+        } else if (opt == "b") {
+            if (is_int_string(arg)) {
+                cluster_band_size = std::stoi(arg);
+            } else {
+                std::cerr << "-b requires an integer argument!\n";
+            }
         }
     }
     for (auto p: bad_opts) {
@@ -178,6 +195,65 @@ void PrintStats(FastaParser* ref, FastaParser* r1, FastqParser* r2) {
     std::cerr << "Avg L: " << average_L_reads << "\n";
     std::cerr << "N50: " << N50 << "\n";
 }
+void MapAndPrintResults(
+    std::vector<std::string>& reads, 
+    std::vector<std::string>& names,
+    std::vector<std::string>& refs,
+    std::vector<std::string>& refs_names,
+    std::unordered_map<unsigned int, std::vector<std::tuple<unsigned int, unsigned int, bool >>>& hash_map,
+    std::unordered_map<unsigned int, unsigned int>& hash_count,
+    unsigned int& total_count) {
+        for (int i = 0; i < reads.size(); i++) {
+            unsigned int num_match = 0;
+            unsigned int num_mismatch = 0;
+            unsigned int num_ins = 0;
+            unsigned int num_del = 0;
+            std::string the_query = reads[i];
+            unsigned int query_len = reads[i].size();
+            std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> t = 
+                mist::Map(the_query.c_str(), query_len, kmer_size, window_size, cluster_band_size, filter, hash_map, hash_count, total_count);   
+            std::cout << names[i] << "\n";
+            std::cout << "target: " << refs_names[std::get<0>(t)] << "\n";
+            std::cout << "diff strand? " << std::get<1>(t) << "\n";
+            std::cout << "q start " << std::get<2>(t) << "\n";
+            std::cout << "q end exclusive " << std::get<3>(t) + kmer_size<< "\n";
+            std::cout << "t start " << std::get<4>(t) << "\n";
+            std::cout << "t end exclusive " << std::get<5>(t) + kmer_size<< "\n"; 
+            if (calculate_alignment) {
+                unsigned int target_end_index_exclusive = std::get<5>(t) + kmer_size; 
+                unsigned int target_len = target_end_index_exclusive - std::get<4>(t);
+                std::string the_target = refs[std::get<0>(t)].substr(std::get<4>(t), target_len);
+                std::string cigar = "";
+                unsigned int target_begin = -1;
+                int alignment_score = mist::Align(the_query.c_str(), query_len, the_target.c_str(), target_len, type, match_cost, mismatch_cost, gap_cost, num_match, num_mismatch, num_ins, num_del, &cigar, &target_begin);
+                std::cout << "score " << alignment_score << "\n";
+                std::cout << "num match " << num_match << "\n";
+                std::cout << "num mismatch " << num_mismatch << "\n";
+                std::cout << "num ins " << num_ins << "\n";
+                std::cout << "num del " << num_del << "\n";
+                std::cout << "cigar " << cigar << "\n";
+            }    
+    }
+        
+        
+}
+
+void Map(FastaParser* ref, FastaParser* reads_fasta, FastqParser* reads_fastq) {
+    std::vector<std::string> fasta_reads = reads_fasta->GetSequences();
+    std::vector<std::string> fastq_reads = reads_fastq->GetSequences();
+    std::vector<std::string> fasta_names = reads_fasta->GetDescriptions();
+    std::vector<std::string> fastq_names = reads_fastq->GetDescriptions();
+    std::vector<std::string> refs = ref->GetSequences();
+    std::vector<std::string> refs_names = ref->GetDescriptions();
+    std::unordered_map<unsigned int, std::vector<std::tuple<unsigned int, unsigned int, bool >>> hash_map;
+    std::unordered_map<unsigned int, unsigned int> hash_count;
+    unsigned int total_count = 0; 
+    mist::Minimize(refs, kmer_size, window_size, hash_map, hash_count, total_count);
+    MapAndPrintResults(fasta_reads, fasta_names, refs, refs_names, hash_map, hash_count, total_count);    
+    MapAndPrintResults(fastq_reads, fastq_names, refs, refs_names, hash_map, hash_count, total_count);
+    
+    
+}
 
 void ProcessNonOpts(std::vector<std::string>& non_opts) {
     
@@ -191,7 +267,7 @@ void ProcessNonOpts(std::vector<std::string>& non_opts) {
     for (int i = 1; i < non_opts.size(); i++) {
         std::string extension = GetFileExtension(non_opts[i]);
         if (extension == "fasta") {
-            reads_fasta->Parse(non_opts[i]);        
+            reads_fasta->Parse(non_opts[i]);
         } else if (extension == "fastq") {
             reads_fastq->Parse(non_opts[i]);
         } else {
@@ -199,7 +275,8 @@ void ProcessNonOpts(std::vector<std::string>& non_opts) {
         }
         
     }
-    PrintStats(ref, reads_fasta, reads_fastq);
+    //PrintStats(ref, reads_fasta, reads_fastq);
+    Map(ref, reads_fasta, reads_fastq);
     
     delete ref;
     delete reads_fasta;
@@ -207,14 +284,10 @@ void ProcessNonOpts(std::vector<std::string>& non_opts) {
     
 }
 
-void Map(FastaParser* ref, FastaParser* reads_fasta, FastqParser* reads_fastq) {
-    
-}
-
 int main(int argc, char** argv) {
     
     std::unordered_map<std::string, bool> m = {{"h", false}, {"c", false}, {"a", true}, {"m", true}, {"n", true}, {"g", true},
-        {"k", true}, {"w", true}, {"f", true}, {"version", false}};
+        {"k", true}, {"w", true}, {"f", true}, {"version", false}, {"b", true}};
     std::vector<std::string> non_opts;
     std::vector<std::pair<std::string, int>> bad_opts;
     OptParser p(m);
@@ -225,6 +298,7 @@ int main(int argc, char** argv) {
     auto opts = p.Parse(argc, argv_string, non_opts, bad_opts);
     ProcessOpts(opts, bad_opts);
     ProcessNonOpts(non_opts);
+    
     
     if (print_version) {
         std::cout << "The current version is " << VERSION_MAJOR << "." << VERSION_MINOR << "." << VERSION_PATCH << "\n";

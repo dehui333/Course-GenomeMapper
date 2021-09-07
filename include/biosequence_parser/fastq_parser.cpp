@@ -79,3 +79,11 @@ size_t FastqParser::MinL() {
 float FastqParser::AverageL() {
     return average_L_;
 }
+
+std::vector<std::string>& FastqParser::GetSequences() {
+    return sequences_;
+}
+
+std::vector<std::string>& FastqParser::GetDescriptions() {
+    return descriptions_;
+}

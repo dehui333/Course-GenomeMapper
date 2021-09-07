@@ -13,19 +13,24 @@ namespace mist {
         int match,
         int mismatch,
         int gap,
+        unsigned int& num_match,
+        unsigned int& num_mismatch,
+        unsigned int& num_ins,
+        unsigned int& num_del,
         std::string* cigar,
-        unsigned int* target_begin) {
+        unsigned int* target_begin
+        ) {
         
         switch (type) {
             
             case AlignmentType::KGlobal:
-                return AlignGlobal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
+                return AlignGlobal(query, query_len, target, target_len, match, mismatch, gap, num_match, num_mismatch, num_ins, num_del, cigar, target_begin);
                 break;
             case AlignmentType::KLocal:
-                return AlignLocal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
+                return AlignLocal(query, query_len, target, target_len, match, mismatch, gap, num_match, num_mismatch, num_ins, num_del, cigar, target_begin);
                 break;
             case AlignmentType::KSemiGlobal:
-                return AlignSemiGlobal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
+                return AlignSemiGlobal(query, query_len, target, target_len, match, mismatch, gap, num_match, num_mismatch, num_ins, num_del, cigar, target_begin);
                 break;
             default:
                 std::cerr << "Unknown alignment type\n";
@@ -41,8 +46,13 @@ namespace mist {
         int match,
         int mismatch,
         int gap,
+        unsigned int& num_match,
+        unsigned int& num_mismatch,
+        unsigned int& num_ins,
+        unsigned int& num_del,
         std::string* cigar,
-        unsigned int* target_begin) {
+        unsigned int* target_begin
+        ) {
             
         
         int matrix[query_len + 1][target_len + 1];
@@ -93,6 +103,7 @@ namespace mist {
                 } else if (matrix[i][j] == matrix[i-1][j] + gap) {
                     move = 1;
                 }
+             
                 if (move == 0) {
                     j--;
                     current_c = 'D';
@@ -112,6 +123,15 @@ namespace mist {
             if (current_c != c) {
                     if (count != 0) {
                         s = std::to_string(count) + c + s;
+                        if (c == '=') {
+                            num_match += count;
+                        } else if (c == 'X') {
+                            num_mismatch += count;
+                        } else if (c == 'D') {
+                            num_del += count;
+                        } else if (c == 'I') {
+                            num_ins += count;
+                        }
                     }
                     c = current_c;
                     count = 1;
@@ -122,6 +142,15 @@ namespace mist {
         }
         if (count != 0) {
             s = std::to_string(count) + c + s;
+            if (c == '=') {
+                num_match += count;
+            } else if (c == 'X') {
+                num_mismatch += count;
+            } else if (c == 'D') {
+                num_del += count;
+            } else if (c == 'I') {
+                num_ins += count;
+            }
         }
         if (cigar != nullptr) {
             *cigar = s;
@@ -138,8 +167,13 @@ namespace mist {
         int match,
         int mismatch,
         int gap,
+        unsigned int& num_match,
+        unsigned int& num_mismatch,
+        unsigned int& num_ins,
+        unsigned int& num_del,
         std::string* cigar,
-        unsigned int* target_begin) {
+        unsigned int* target_begin
+        ) {
             
         int matrix[query_len + 1][target_len + 1];
         for (unsigned int i = 0; i <= query_len; i++) {
@@ -222,6 +256,15 @@ namespace mist {
             if (current_c != c) {
                     if (count != 0) {
                         s = std::to_string(count) + c + s;
+                        if (c == '=') {
+                            num_match += count;
+                        } else if (c == 'X') {
+                            num_mismatch += count;
+                        } else if (c == 'D') {
+                            num_del += count;
+                        } else if (c == 'I') {
+                            num_ins += count;
+                        }
                     }
                     c = current_c;
                     count = 1;
@@ -238,6 +281,16 @@ namespace mist {
         int num_S_left = i;
         if (count != 0) {
             s = std::to_string(count) + c + s;
+            if (c == '=') {
+                num_match += count;
+            } else if (c == 'X') {
+                num_mismatch += count;
+            } else if (c == 'D') {
+                num_del += count;
+            } else if (c == 'I') {
+                num_ins += count;
+            }
+            
         }
         std::string left_append = "";
         std::string right_append = "";
@@ -264,9 +317,14 @@ namespace mist {
         int match,
         int mismatch,
         int gap,
+        unsigned int& num_match,
+        unsigned int& num_mismatch,
+        unsigned int& num_ins,
+        unsigned int& num_del,
         std::string* cigar,
-        unsigned int* target_begin) {
-        int score = AlignGlobal(query, query_len, target, target_len, match, mismatch, gap, cigar, target_begin);
+        unsigned int* target_begin
+        ) {
+        int score = AlignGlobal(query, query_len, target, target_len, match, mismatch, gap, num_match, num_mismatch, num_ins, num_del, cigar, target_begin);
         if (cigar->empty()) {
             return score;
         }

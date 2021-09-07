@@ -74,3 +74,11 @@ size_t FastaParser::MinL() {
 float FastaParser::AverageL() {
     return average_L_;
 }
+
+std::vector<std::string>& FastaParser::GetSequences() {
+    return sequences_;
+}
+
+std::vector<std::string>& FastaParser::GetDescriptions() {
+    return descriptions_;
+}

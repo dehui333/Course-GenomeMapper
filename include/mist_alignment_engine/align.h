@@ -13,6 +13,10 @@ namespace mist {
         int match,
         int mismatch,
         int gap,
+        unsigned int& num_match,
+        unsigned int& num_mismatch,
+        unsigned int& num_ins,
+        unsigned int& num_del,
         std::string* cigar = nullptr,
         unsigned int* target_begin = nullptr
     );
@@ -23,6 +27,10 @@ namespace mist {
         int match,
         int mismatch,
         int gap,
+        unsigned int& num_match,
+        unsigned int& num_mismatch,
+        unsigned int& num_ins,
+        unsigned int& num_del,
         std::string* cigar = nullptr,
         unsigned int* target_begin = nullptr
     );
@@ -33,6 +41,10 @@ namespace mist {
         int match,
         int mismatch,
         int gap,
+        unsigned int& num_match,
+        unsigned int& num_mismatch,
+        unsigned int& num_ins,
+        unsigned int& num_del,
         std::string* cigar = nullptr,
         unsigned int* target_begin = nullptr
     );
@@ -43,6 +55,10 @@ namespace mist {
         int match,
         int mismatch,
         int gap,
+        unsigned int& num_match,
+        unsigned int& num_mismatch,
+        unsigned int& num_ins,
+        unsigned int& num_del,
         std::string* cigar = nullptr,
         unsigned int* target_begin = nullptr
     );
