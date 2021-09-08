@@ -23,7 +23,7 @@ namespace mist {
         );
     
     unsigned int KmerHash(const char* sequence, unsigned int kmer_len, unsigned int start, bool is_original);
-    std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> Map(const char* sequence,
+    std::vector<std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> > Map(const char* sequence,
         unsigned int sequence_len,
         unsigned int kmer_len,
         unsigned int window_len,

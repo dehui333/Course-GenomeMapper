@@ -198,7 +198,7 @@ namespace mist {
         }       
     }
     
-     std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> Map(
+     std::vector<std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int>> Map(
         const char* query,
         unsigned int sequence_len,
         unsigned int kmer_len,
@@ -212,8 +212,7 @@ namespace mist {
         std::vector<std::tuple<unsigned int, bool, int, unsigned int>> v;
         std::vector<std::tuple<unsigned int, unsigned int, bool>> minimizers_of_query = mist::Minimize(query, sequence_len, kmer_len, window_len);
         unsigned int best_increasing_len = 0;
-        unsigned int best_len_diff = UINT32_MAX;
-        std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> best;
+        std::vector<std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int>> bests;
         //for (auto p: mist::hash_count) {
         //    std::cout << p.first << " count " << p.second << "\n"; 
         //}
@@ -289,17 +288,13 @@ namespace mist {
                     auto overlap = FindOverlap(roughly_colinear, increasing_len);
                     //std::cout << "INCREASE " << increasing_len << "\n";
                     //std::cout << "BEST INCREASE " << best_increasing_len << "\n";
-                    int len_q = std::get<3>(overlap) - std::get<2>(overlap);
-                    int len_t = std::get<5>(overlap) - std::get<4>(overlap);
-                    unsigned int len_diff = std::abs(len_q - len_t);
                     if (increasing_len > best_increasing_len) {
-                        best = overlap;
+                        bests.clear();
+                        bests.push_back(overlap);
                         best_increasing_len = increasing_len;
-                        best_len_diff = len_diff;
-                    } else if (increasing_len == best_increasing_len && len_diff < best_len_diff) {
-                        best = overlap;
-                        best_increasing_len = increasing_len;
-                        best_len_diff = len_diff;
+                    } else if (increasing_len == best_increasing_len) {
+                        bests.push_back(overlap);
+                        
                     }                        
                     //std::cout << "--------------------\n";
                     
@@ -313,7 +308,7 @@ namespace mist {
         std::cout <<"t start " << std::get<4>(best) << "\n";
         std::cout <<"t end " << std::get<5>(best) << "\n\n";
         */
-        return best;
+        return bests;
 
     }
 }
