@@ -196,69 +196,86 @@ void PrintStats(FastaParser* ref, FastaParser* r1, FastqParser* r2) {
     std::cerr << "N50: " << N50 << "\n";
 }
 void MapAndPrintResults(
-    std::vector<std::string>& reads, 
-    std::vector<std::string>& names,
+    std::vector<std::string>& fasta_reads, 
+    std::vector<std::string>& fasta_names,
+    std::vector<std::string>& fastq_reads, 
+    std::vector<std::string>& fastq_names,
     std::vector<std::string>& refs,
     std::vector<std::string>& refs_names,
     std::unordered_map<unsigned int, std::vector<std::tuple<unsigned int, unsigned int, bool >>>& hash_map,
     std::unordered_map<unsigned int, unsigned int>& hash_count,
     unsigned int& total_count) {
-        for (int i = 0; i < reads.size(); i++) {
-            
-            
-            std::string the_query = reads[i];
-            unsigned int query_len = reads[i].size();
+    
+    int num_fasta = fasta_reads.size();
+    int num_total = fasta_reads.size() + fastq_reads.size();
+    #pragma omp parallel for
+    for (int i = 0; i < num_total; i++) {
+        std::string the_query;
+        unsigned int query_len;
+        std::string query_name;
         
-            
-            std::vector<std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int>> overlaps = 
-                mist::Map(the_query.c_str(), query_len, kmer_size, window_size, cluster_band_size, filter, hash_map, hash_count, total_count);   
-            
-            for (auto t: overlaps) {
-                unsigned int num_match = 0;
-                unsigned int num_mismatch = 0;
-                unsigned int num_ins = 0;
-                unsigned int num_del = 0;
-                std::string output_string = "";
-                std::string cigar = "";    
-                /*std::cout << names[i] << "\n";
-                std::cout << "target: " << refs_names[std::get<0>(t)] << "\n";
-                std::cout << "diff strand? " << std::get<1>(t) << "\n";
-                std::cout << "q start " << std::get<2>(t) << "\n";
-                std::cout << "q end exclusive " << std::get<3>(t) + kmer_size<< "\n";
-                std::cout << "t start " << std::get<4>(t) << "\n";
-                std::cout << "t end exclusive " << std::get<5>(t) + kmer_size<< "\n";*/
-                output_string += names[i] + "\t";
-                output_string += std::to_string(query_len) + "\t";
-                output_string += std::to_string(std::get<2>(t)) + "\t";
-                output_string += std::to_string(std::get<3>(t) + kmer_size) + "\t";
-                if (std::get<1>(t)) {
-                    output_string += "-\t";
-                } else {
-                    output_string += "+\t";
-                }
-                output_string += refs_names[std::get<0>(t)] + "\t";
-                output_string += std::to_string(refs[std::get<0>(t)].size()) + "\t";
-                output_string += std::to_string(std::get<4>(t)) + "\t";
-                output_string += std::to_string(std::get<5>(t) + kmer_size) + "\t";
-                if (calculate_alignment) {
-                    unsigned int target_end_index_exclusive = std::get<5>(t) + kmer_size; 
-                    unsigned int target_len = target_end_index_exclusive - std::get<4>(t);
-                    std::string the_target = refs[std::get<0>(t)].substr(std::get<4>(t), target_len);
-                    unsigned int target_begin = -1;
-                    int alignment_score = mist::Align(the_query.c_str(), query_len, the_target.c_str(), target_len, type, match_cost, mismatch_cost, gap_cost, num_match, num_mismatch, num_ins, num_del, &cigar, &target_begin);
-                    /*std::cout << "score " << alignment_score << "\n";
-                    std::cout << "num match " << num_match << "\n";
-                    std::cout << "num mismatch " << num_mismatch << "\n";
-                    std::cout << "num ins " << num_ins << "\n";
-                    std::cout << "num del " << num_del << "\n";
-                    std::cout << "cigar " << cigar << "\n";*/
-                }
-                output_string += std::to_string(num_match) + "\t";
-                output_string += std::to_string(num_match+num_mismatch+num_ins+num_del) + "\t";
-                output_string += std::to_string(255) + "\t";
-                output_string += "cg:Z:" + cigar +"\n";
-                std::cout << output_string;
+        if (i < num_fasta) {
+            the_query  = fasta_reads[i];
+            query_len = the_query.size();
+            query_name = fasta_names[i];            
+        } else {
+            the_query  = fastq_reads[i-num_fasta];
+            query_len = the_query.size();
+            query_name = fastq_names[i-num_fasta];
+        }
+        
+        
+    
+        
+        std::vector<std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int>> overlaps = 
+            mist::Map(the_query.c_str(), query_len, kmer_size, window_size, cluster_band_size, filter, hash_map, hash_count, total_count);   
+        
+        for (auto t: overlaps) {
+            unsigned int num_match = 0;
+            unsigned int num_mismatch = 0;
+            unsigned int num_ins = 0;
+            unsigned int num_del = 0;
+            std::string output_string = "";
+            std::string cigar = "";    
+            /*std::cout << names[i] << "\n";
+            std::cout << "target: " << refs_names[std::get<0>(t)] << "\n";
+            std::cout << "diff strand? " << std::get<1>(t) << "\n";
+            std::cout << "q start " << std::get<2>(t) << "\n";
+            std::cout << "q end exclusive " << std::get<3>(t) + kmer_size<< "\n";
+            std::cout << "t start " << std::get<4>(t) << "\n";
+            std::cout << "t end exclusive " << std::get<5>(t) + kmer_size<< "\n";*/
+            output_string += query_name + "\t";
+            output_string += std::to_string(query_len) + "\t";
+            output_string += std::to_string(std::get<2>(t)) + "\t";
+            output_string += std::to_string(std::get<3>(t) + kmer_size) + "\t";
+            if (std::get<1>(t)) {
+                output_string += "-\t";
+            } else {
+                output_string += "+\t";
             }
+            output_string += refs_names[std::get<0>(t)] + "\t";
+            output_string += std::to_string(refs[std::get<0>(t)].size()) + "\t";
+            output_string += std::to_string(std::get<4>(t)) + "\t";
+            output_string += std::to_string(std::get<5>(t) + kmer_size) + "\t";
+            if (calculate_alignment) {
+                unsigned int target_end_index_exclusive = std::get<5>(t) + kmer_size; 
+                unsigned int target_len = target_end_index_exclusive - std::get<4>(t);
+                std::string the_target = refs[std::get<0>(t)].substr(std::get<4>(t), target_len);
+                unsigned int target_begin = -1;
+                int alignment_score = mist::Align(the_query.c_str(), query_len, the_target.c_str(), target_len, type, match_cost, mismatch_cost, gap_cost, num_match, num_mismatch, num_ins, num_del, &cigar, &target_begin);
+                /*std::cout << "score " << alignment_score << "\n";
+                std::cout << "num match " << num_match << "\n";
+                std::cout << "num mismatch " << num_mismatch << "\n";
+                std::cout << "num ins " << num_ins << "\n";
+                std::cout << "num del " << num_del << "\n";
+                std::cout << "cigar " << cigar << "\n";*/
+            }
+            output_string += std::to_string(num_match) + "\t";
+            output_string += std::to_string(num_match+num_mismatch+num_ins+num_del) + "\t";
+            output_string += std::to_string(255) + "\t";
+            output_string += "cg:Z:" + cigar +"\n";
+            std::cout << output_string;
+        }
     }
         
         
@@ -275,8 +292,8 @@ void Map(FastaParser* ref, FastaParser* reads_fasta, FastqParser* reads_fastq) {
     std::unordered_map<unsigned int, unsigned int> hash_count;
     unsigned int total_count = 0; 
     mist::Minimize(refs, kmer_size, window_size, hash_map, hash_count, total_count);
-    MapAndPrintResults(fasta_reads, fasta_names, refs, refs_names, hash_map, hash_count, total_count);    
-    MapAndPrintResults(fastq_reads, fastq_names, refs, refs_names, hash_map, hash_count, total_count);
+    MapAndPrintResults(fasta_reads, fasta_names, fastq_reads, fastq_names, refs, refs_names, hash_map, hash_count, total_count);    
+
     
     
 }

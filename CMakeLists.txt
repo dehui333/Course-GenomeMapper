@@ -21,6 +21,10 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(mist_mapper PUBLIC OpenMP::OpenMP_CXX)
+endif()
 
 # directory to get the header files to include
 target_include_directories(mist_mapper 
