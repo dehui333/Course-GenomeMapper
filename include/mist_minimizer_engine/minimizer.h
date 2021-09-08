@@ -31,11 +31,12 @@ namespace mist {
         double filter,
         std::unordered_map<unsigned int, std::vector<std::tuple<unsigned int, unsigned int, bool >>>& hash_map,
         std::unordered_map<unsigned int, unsigned int>& hash_count,
-        unsigned int& total_count
+        unsigned int& total_count,
+        unsigned int l_limit
         );
     std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int> FindOverlap(std::vector<std::tuple<unsigned int, bool, int, unsigned int>> roughly_colinear, unsigned int& increasing_len);
     
-    
+
     
     
 }

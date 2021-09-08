@@ -22,6 +22,7 @@ int kmer_size = 15;
 int window_size = 10;
 int cluster_band_size = 10;
 double filter = 0.001;
+int l_limit = 40;
 
 std::string ErrorString(std::string opt, int error_code) {
     switch (error_code){
@@ -126,6 +127,12 @@ void ProcessOpts(std::vector<std::pair<std::string, std::string>>& opts, std::ve
             } else {
                 std::cerr << "-b requires an integer argument!\n";
             }
+        } else if (opt == "l") {
+            if (is_int_string(arg)) {
+                l_limit = std::stoi(arg);
+            } else {
+                std::cerr << "-l requires an integer argument!\n";
+            }
         }
     }
     for (auto p: bad_opts) {
@@ -228,7 +235,7 @@ void MapAndPrintResults(
     
         
         std::vector<std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int>> overlaps = 
-            mist::Map(the_query.c_str(), query_len, kmer_size, window_size, cluster_band_size, filter, hash_map, hash_count, total_count);   
+            mist::Map(the_query.c_str(), query_len, kmer_size, window_size, cluster_band_size, filter, hash_map, hash_count, total_count, l_limit);   
         
         for (auto t: overlaps) {
             unsigned int num_match = 0;
@@ -318,7 +325,7 @@ void ProcessNonOpts(std::vector<std::string>& non_opts) {
         }
         
     }
-    //PrintStats(ref, reads_fasta, reads_fastq);
+    PrintStats(ref, reads_fasta, reads_fastq);
     Map(ref, reads_fasta, reads_fastq);
     
     delete ref;
@@ -330,7 +337,7 @@ void ProcessNonOpts(std::vector<std::string>& non_opts) {
 int main(int argc, char** argv) {
     
     std::unordered_map<std::string, bool> m = {{"h", false}, {"c", false}, {"a", true}, {"m", true}, {"n", true}, {"g", true},
-        {"k", true}, {"w", true}, {"f", true}, {"version", false}, {"b", true}};
+        {"k", true}, {"w", true}, {"f", true}, {"version", false}, {"b", true}, {"l", true}};
     std::vector<std::string> non_opts;
     std::vector<std::pair<std::string, int>> bad_opts;
     OptParser p(m);

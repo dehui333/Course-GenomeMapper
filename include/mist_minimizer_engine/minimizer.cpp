@@ -117,6 +117,7 @@ namespace mist {
             
             
         }
+
         hash = ~hash + (hash << 15);
         hash = hash ^ (hash >> 12);
         hash = hash + (hash << 2);
@@ -207,11 +208,11 @@ namespace mist {
         double filter,
         std::unordered_map<unsigned int, std::vector<std::tuple<unsigned int, unsigned int, bool >>>& hash_map,
         std::unordered_map<unsigned int, unsigned int>& hash_count,
-        unsigned int& total_count
+        unsigned int& total_count,
+        unsigned int l_limit
         ) {
         std::vector<std::tuple<unsigned int, bool, int, unsigned int>> v;
         std::vector<std::tuple<unsigned int, unsigned int, bool>> minimizers_of_query = mist::Minimize(query, sequence_len, kmer_len, window_len);
-        unsigned int best_increasing_len = 0;
         std::vector<std::tuple<unsigned int, bool, unsigned int, unsigned int, unsigned int, unsigned int>> bests;
         //for (auto p: mist::hash_count) {
         //    std::cout << p.first << " count " << p.second << "\n"; 
@@ -288,11 +289,8 @@ namespace mist {
                     auto overlap = FindOverlap(roughly_colinear, increasing_len);
                     //std::cout << "INCREASE " << increasing_len << "\n";
                     //std::cout << "BEST INCREASE " << best_increasing_len << "\n";
-                    if (increasing_len > best_increasing_len) {
-                        bests.clear();
-                        bests.push_back(overlap);
-                        best_increasing_len = increasing_len;
-                    } else if (increasing_len == best_increasing_len) {
+                    if (increasing_len > l_limit) {
+                        
                         bests.push_back(overlap);
                         
                     }                        
